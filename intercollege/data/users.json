@@ -16,4 +16,13 @@
   "college" : "Test College",
   "location" : "Kerala",
   "interests" : [ "events" ]
+}, {
+  "id" : 3,
+  "name" : "Nihar Test",
+  "username" : "nihartest",
+  "password" : "$2a$10$FEE0ed7HYVlPOmNFpV7PxeiC8h2q1MVQlj4hbzQTQqVAK8IlC8uJa",
+  "role" : "STUDENT",
+  "college" : "tkm",
+  "location" : "kollam",
+  "interests" : [ "AI" ]
 } ]
