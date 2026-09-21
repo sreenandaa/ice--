@@ -1,1 +1,19 @@
-[]
+[ {
+  "id" : 1,
+  "name" : "Test Student",
+  "username" : "student1",
+  "password" : "$2a$10$JZtvbkwFZcK9NSSaTIV.C.FQXd7B1yz5oDwdE6Ep.w/Iv7M8LUdae",
+  "role" : "STUDENT",
+  "college" : "Test College",
+  "location" : "Kerala",
+  "interests" : [ "sports" ]
+}, {
+  "id" : 2,
+  "name" : "Test Coordinator",
+  "username" : "coordinator1",
+  "password" : "$2a$10$xwKmbsrg.iyzs60zQIIuvu079WEIr32j1Vf1xdrpuwyjhO95zycsG",
+  "role" : "COORDINATOR",
+  "college" : "Test College",
+  "location" : "Kerala",
+  "interests" : [ "events" ]
+} ]
