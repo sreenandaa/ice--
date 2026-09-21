@@ -1,11 +1,16 @@
-package com.intercollege.model;
+package com.example.intercollege.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class Event {
 
     private Long id;
+
     private String name;
     private String description;
     private String college;
@@ -22,35 +27,22 @@ public class Event {
     private double longitude;
 
     private String registrationLink;
+
     private String organizer;
     private String contact;
+
+    // Optional fields
+    private String imageUrl;
+    private Integer maxParticipants;
+
+    // Automatically maintained by backend
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Event() {
     }
 
-    public Event(Long id, String name, String description, String college,
-                 String category, LocalDate date, LocalTime startTime,
-                 LocalTime endTime, String venue, String city,
-                 double latitude, double longitude,
-                 String registrationLink, String organizer,
-                 String contact) {
-
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.college = college;
-        this.category = category;
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.venue = venue;
-        this.city = city;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.registrationLink = registrationLink;
-        this.organizer = organizer;
-        this.contact = contact;
-    }
+    // ---------- GETTERS AND SETTERS ----------
 
     public Long getId() {
         return id;
@@ -170,5 +162,90 @@ public class Event {
 
     public void setContact(String contact) {
         this.contact = contact;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Integer getMaxParticipants() {
+        return maxParticipants;
+    }
+
+    public void setMaxParticipants(Integer maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    // ---------- EVENT STATUS ----------
+
+    /*
+     * Status is calculated automatically.
+     * It is NOT stored in events.json.
+     */
+    @JsonProperty(access = Access.READ_ONLY)
+    public String getStatus() {
+
+        if (date == null || startTime == null || endTime == null) {
+            return "Upcoming";
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
+        // Event is in the future
+        if (date.isAfter(today)) {
+
+            long daysUntilEvent =
+                    java.time.temporal.ChronoUnit.DAYS.between(
+                            today,
+                            date
+                    );
+
+            if (daysUntilEvent <= 3) {
+                return "Happening Soon";
+            }
+
+            if (daysUntilEvent <= 7) {
+                return "This Week";
+            }
+
+            return "Upcoming";
+        }
+
+        // Event is in the past
+        if (date.isBefore(today)) {
+            return "Completed";
+        }
+
+        // Event is today
+        if (now.isBefore(startTime)) {
+            return "Happening Today";
+        }
+
+        if (now.isAfter(endTime)) {
+            return "Completed";
+        }
+
+        return "Ongoing";
     }
 }

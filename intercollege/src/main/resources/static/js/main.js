@@ -1,0 +1,1 @@
+console.log("InterCollege frontend loaded.");

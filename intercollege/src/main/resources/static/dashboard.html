@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Events - InterCollege</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+<body>
+
+<header class="dashboard-header">
+
+    <div class="container nav">
+
+        <h2>INTERCOLLEGE</h2>
+
+        <div class="nav-links">
+
+            <a href="profile.html">
+                Profile
+            </a>
+
+            <a href="#" id="logoutButton">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="container dashboard">
+
+    <section class="dashboard-intro">
+
+        <p>EXPLORE</p>
+
+        <h1>
+            Discover Events
+        </h1>
+
+        <p>
+            Find what's happening across colleges.
+        </p>
+
+    </section>
+
+
+    <section class="event-tools">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search events..."
+        >
+
+        <button
+            id="locationButton"
+            class="btn"
+        >
+            📍 Use My Location
+        </button>
+
+    </section>
+
+
+    <section class="categories">
+
+        <button data-category="ALL">
+            All
+        </button>
+
+        <button data-category="Technical">
+            Technical
+        </button>
+
+        <button data-category="Cultural">
+            Cultural
+        </button>
+
+        <button data-category="Talk Session">
+            Talk Session
+        </button>
+
+        <button data-category="Treasure Hunt">
+            Treasure Hunt
+        </button>
+
+        <button data-category="Public Speaking">
+            Public Speaking
+        </button>
+
+        <button data-category="Quiz">
+            Quiz
+        </button>
+
+        <button data-category="Makeathon">
+            Makeathon
+        </button>
+
+        <button data-category="Workshop">
+            Workshop
+        </button>
+
+        <button data-category="Sports">
+            Sports
+        </button>
+
+        <button data-category="Other">
+            Other
+        </button>
+
+    </section>
+
+
+    <section>
+
+        <div id="eventsContainer"
+             class="events-grid">
+
+            <!-- JavaScript will insert events here -->
+
+        </div>
+
+        <p id="noEventsMessage">
+            No events found.
+        </p>
+
+    </section>
+
+</main>
+
+<script src="js/dashboard.js"></script>
+<script src="js/location.js"></script>
+
+</body>
+</html>

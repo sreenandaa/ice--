@@ -1,0 +1,150 @@
+.dashboard {
+    padding-top: 50px;
+    padding-bottom: 60px;
+}
+
+.dashboard-header {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    gap: 25px;
+}
+
+.dashboard-intro {
+    margin-bottom: 35px;
+}
+
+.dashboard-intro p:first-child {
+    color: var(--light);
+    letter-spacing: 2px;
+}
+
+.dashboard-intro h1 {
+    font-size: 42px;
+    margin: 10px 0;
+}
+
+.dashboard-intro p:last-child {
+    color: var(--muted);
+}
+
+.event-tools {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.event-tools input {
+    flex: 1;
+
+    padding: 14px;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+
+    color: white;
+
+    border-radius: 8px;
+}
+
+.categories {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    margin-bottom: 35px;
+}
+
+.categories button {
+    padding: 9px 15px;
+
+    border-radius: 20px;
+
+    background: var(--card);
+    color: var(--text);
+
+    border: 1px solid var(--border);
+}
+
+.categories button:hover {
+    background: var(--secondary);
+}
+
+.events-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(280px, 1fr));
+
+    gap: 22px;
+}
+
+.event-card {
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+}
+
+.event-poster {
+    height: 180px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--secondary)
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 50px;
+}
+
+.event-content {
+    padding: 20px;
+}
+
+.event-content h3 {
+    margin-bottom: 10px;
+}
+
+.event-info {
+    color: var(--muted);
+    margin: 7px 0;
+}
+
+.event-category {
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    border-radius: 15px;
+
+    background: var(--primary);
+
+    margin-bottom: 12px;
+}
+
+.event-content .btn {
+    display: inline-block;
+    margin-top: 15px;
+}
+
+#noEventsMessage {
+    display: none;
+    color: var(--muted);
+}

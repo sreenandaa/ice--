@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Register - InterCollege</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-card card">
+
+        <h1>Create Account</h1>
+
+        <form id="registerForm">
+
+            <label>Name</label>
+
+            <input
+                type="text"
+                id="name"
+                required
+            >
+
+            <label>Username</label>
+
+            <input
+                type="text"
+                id="username"
+                required
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                id="password"
+                required
+            >
+
+            <label>Role</label>
+
+            <select id="role">
+
+                <option value="STUDENT">
+                    Student
+                </option>
+
+                <option value="COORDINATOR">
+                    Coordinator
+                </option>
+
+            </select>
+
+            <label>College</label>
+
+            <input
+                type="text"
+                id="college"
+            >
+
+            <label>Location</label>
+
+            <input
+                type="text"
+                id="location"
+                placeholder="Eg: Kollam"
+            >
+
+            <label>Interests</label>
+
+            <input
+                type="text"
+                id="interests"
+                placeholder="AI, Web Development, Robotics"
+            >
+
+            <button
+                type="submit"
+                class="btn"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+        <p id="registerMessage"></p>
+
+        <p>
+            Already have an account?
+            <a href="login.html">Login</a>
+        </p>
+
+    </div>
+
+</div>
+
+<script src="js/auth.js"></script>
+
+</body>
+</html>

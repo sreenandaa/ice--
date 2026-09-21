@@ -1,4 +1,4 @@
-package com.intercollege.model;
+package com.example.intercollege.model;
 
 import java.time.LocalDateTime;
 
