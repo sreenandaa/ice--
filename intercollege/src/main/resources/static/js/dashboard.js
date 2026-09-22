@@ -67,8 +67,12 @@ function displayEvents(events) {
         card.innerHTML = `
 
             <div class="event-poster">
-                🎫
-            </div>
+    ${
+        event.imageUrl
+            ? `<img src="${event.imageUrl}" alt="${event.name}" class="event-image">`
+            : "🎫"
+    }
+</div>
 
             <div class="event-content">
 
