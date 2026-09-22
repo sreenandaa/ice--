@@ -70,4 +70,13 @@
   "college" : "College of Engineering, Trivandrum",
   "location" : "Trivandrum",
   "interests" : [ "Robitics" ]
+}, {
+  "id" : 9,
+  "name" : "Riona",
+  "username" : "TheChickenNugget",
+  "password" : "$2a$10$AmS0kpBchix0leiRIWFC0.MCcmsDlKzcnpwfjwdRLRj.iCcTNCcIC",
+  "role" : "COORDINATOR",
+  "college" : "College of Engineering, Trivandrum",
+  "location" : "Kollam",
+  "interests" : [ "AI" ]
 } ]

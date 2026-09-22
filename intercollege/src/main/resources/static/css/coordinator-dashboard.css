@@ -2,13 +2,24 @@
    COORDINATOR DASHBOARD
 ======================================== */
 
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+
 .coordinator-dashboard {
 
+    width: 100%;
     max-width: 1200px;
 
     margin: 0 auto;
 
     padding: 35px 25px 60px;
+
+    box-sizing: border-box;
 
 }
 
@@ -51,7 +62,60 @@
 
 
 /* ========================================
-   LOGOUT
+   DASHBOARD ACTIONS
+======================================== */
+
+.dashboard-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-shrink: 0;
+
+}
+
+
+/* ========================================
+   HOME BUTTON
+======================================== */
+
+.home-btn {
+
+    display: inline-block;
+
+    padding: 10px 20px;
+
+    border-radius: 8px;
+
+    background: #3f9277;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+
+}
+
+
+.home-btn:hover {
+
+    background: #347a64;
+
+    transform: translateY(-1px);
+
+}
+
+
+/* ========================================
+   LOGOUT BUTTON
 ======================================== */
 
 .logout-btn {
@@ -66,6 +130,8 @@
 
     font-size: 15px;
 
+    font-weight: 600;
+
     background: #3f9277;
 
     color: white;
@@ -79,6 +145,8 @@
 
     background: #347a64;
 
+    transform: translateY(-1px);
+
 }
 
 
@@ -88,6 +156,8 @@
 
 .create-event-section,
 .available-events-section {
+
+    width: 100%;
 
     margin-bottom: 40px;
 
@@ -122,10 +192,14 @@
 
 
 /* ========================================
-   FORM CONTAINER
+   FORM
 ======================================== */
 
 #eventForm {
+
+    width: 100%;
+
+    box-sizing: border-box;
 
     background: #0d211c;
 
@@ -192,6 +266,8 @@
 
 .form-group {
 
+    min-width: 0;
+
     display: flex;
 
     flex-direction: column;
@@ -222,6 +298,8 @@
 .form-group textarea {
 
     width: 100%;
+
+    max-width: 100%;
 
     box-sizing: border-box;
 
@@ -257,15 +335,6 @@
 }
 
 
-.form-group textarea {
-
-    resize: vertical;
-
-    min-height: 100px;
-
-}
-
-
 .form-group input::placeholder,
 .form-group textarea::placeholder {
 
@@ -274,13 +343,11 @@
 }
 
 
-/* ========================================
-   SELECT
-======================================== */
+.form-group textarea {
 
-.form-group select {
+    resize: vertical;
 
-    cursor: pointer;
+    min-height: 100px;
 
 }
 
@@ -295,10 +362,18 @@
 
     justify-content: flex-end;
 
+    align-items: center;
+
+    gap: 10px;
+
     margin-top: 10px;
 
 }
 
+
+/* ========================================
+   ADD / UPDATE EVENT BUTTON
+======================================== */
 
 .create-event-btn {
 
@@ -333,6 +408,38 @@
 
 
 /* ========================================
+   CANCEL EDIT
+======================================== */
+
+.cancel-btn {
+
+    padding: 12px 22px;
+
+    border: 1px solid #777;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    transition: 0.2s ease;
+
+}
+
+
+.cancel-btn:hover {
+
+    background: #333;
+
+}
+
+
+/* ========================================
    MESSAGE
 ======================================== */
 
@@ -350,10 +457,12 @@
 
 
 /* ========================================
-   EVENT GRID
+   EVENTS GRID
 ======================================== */
 
 #eventsContainer {
+
+    width: 100%;
 
     display: grid;
 
@@ -374,6 +483,10 @@
 
 .event-card {
 
+    min-width: 0;
+
+    box-sizing: border-box;
+
     background: #0d211c;
 
     border: 1px solid #285348;
@@ -381,6 +494,8 @@
     border-radius: 14px;
 
     padding: 24px;
+
+    overflow: hidden;
 
     transition:
         transform 0.2s ease,
@@ -400,25 +515,9 @@
 }
 
 
-.event-card h3 {
-
-    margin: 0 0 15px;
-
-    font-size: 24px;
-
-}
-
-
-.event-card p {
-
-    margin: 8px 0;
-
-    font-size: 15px;
-
-    line-height: 1.5;
-
-}
-
+/* ========================================
+   EVENT CATEGORY
+======================================== */
 
 .event-category {
 
@@ -436,19 +535,59 @@
 
     font-size: 13px;
 
+    font-weight: 600;
+
 }
 
 
 /* ========================================
-   EVENT BUTTON
+   EVENT TEXT
+======================================== */
+
+.event-card h3 {
+
+    margin: 0 0 15px;
+
+    font-size: 24px;
+
+    word-wrap: break-word;
+
+}
+
+
+.event-card p {
+
+    margin: 8px 0;
+
+    font-size: 15px;
+
+    line-height: 1.5;
+
+    word-wrap: break-word;
+
+}
+
+
+/* ========================================
+   EVENT ACTIONS
 ======================================== */
 
 .event-actions {
+
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
 
     margin-top: 20px;
 
 }
 
+
+/* ========================================
+   VIEW EVENT
+======================================== */
 
 .event-btn {
 
@@ -464,9 +603,13 @@
 
     text-decoration: none;
 
+    border: none;
+
     font-size: 14px;
 
     font-weight: 600;
+
+    cursor: pointer;
 
     transition: 0.2s ease;
 
@@ -476,6 +619,56 @@
 .event-btn:hover {
 
     background: #347a64;
+
+    transform: translateY(-1px);
+
+}
+
+
+/* ========================================
+   EDIT BUTTON
+======================================== */
+
+.edit-btn {
+
+    border: none;
+
+    cursor: pointer;
+
+    background: #3f9277;
+
+    color: white;
+
+}
+
+
+.edit-btn:hover {
+
+    background: #347a64;
+
+}
+
+
+/* ========================================
+   DELETE BUTTON
+======================================== */
+
+.delete-btn {
+
+    border: none;
+
+    cursor: pointer;
+
+    background: #9b4d4d;
+
+    color: white;
+
+}
+
+
+.delete-btn:hover {
+
+    background: #7f3e3e;
 
 }
 
@@ -499,7 +692,25 @@
 
 
 /* ========================================
-   MOBILE
+   ERROR
+======================================== */
+
+.error-message {
+
+    padding: 25px;
+
+    text-align: center;
+
+    border-radius: 12px;
+
+    border: 1px solid
+        rgba(255, 100, 100, 0.4);
+
+}
+
+
+/* ========================================
+   TABLET
 ======================================== */
 
 @media (max-width: 800px) {
@@ -527,6 +738,23 @@
     }
 
 
+    .dashboard-actions {
+
+        width: 100%;
+
+    }
+
+
+    .home-btn,
+    .logout-btn {
+
+        flex: 1;
+
+        text-align: center;
+
+    }
+
+
     .form-grid {
 
         grid-template-columns: 1fr;
@@ -538,19 +766,40 @@
 
         justify-content: stretch;
 
+        flex-wrap: wrap;
+
     }
 
 
-    .create-event-btn {
+    .create-event-btn,
+    .cancel-btn {
 
-        width: 100%;
+        flex: 1;
+
+    }
+
+
+    #eventsContainer {
+
+        grid-template-columns: 1fr;
 
     }
 
 }
 
 
+/* ========================================
+   MOBILE
+======================================== */
+
 @media (max-width: 500px) {
+
+    .coordinator-dashboard {
+
+        padding: 20px 12px 40px;
+
+    }
+
 
     .dashboard-header h1 {
 
@@ -569,6 +818,50 @@
     #eventForm {
 
         padding: 20px;
+
+    }
+
+
+    .event-card {
+
+        padding: 20px;
+
+    }
+
+
+    .event-actions {
+
+        flex-direction: column;
+
+    }
+
+
+    .event-btn {
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+        text-align: center;
+
+    }
+
+
+    .form-actions {
+
+        flex-direction: column;
+
+        width: 100%;
+
+    }
+
+
+    .create-event-btn,
+    .cancel-btn {
+
+        width: 100%;
+
+        box-sizing: border-box;
 
     }
 

@@ -2,7 +2,9 @@ package com.example.intercollege.controller;
 
 import com.example.intercollege.model.Event;
 import com.example.intercollege.service.EventService;
+
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,84 +22,250 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    // Anyone who is logged in can view events
+
+    // ========================================
+    // GET ALL EVENTS
+    // ========================================
+
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
+
+        return ResponseEntity.ok(
+                eventService.getAllEvents()
+        );
     }
 
-    // Anyone who is logged in can view one event
+
+    // ========================================
+    // GET ONE EVENT
+    // ========================================
+
     @GetMapping("/{id}")
-    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
+    public ResponseEntity<Event> getEventById(
+            @PathVariable Long id) {
+
         return eventService.getEventById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(
+                        ResponseEntity.notFound().build()
+                );
     }
 
-    // Only COORDINATOR can create an event
+
+    // ========================================
+    // CREATE EVENT
+    // ONLY COORDINATOR
+    // ========================================
+
     @PostMapping
     public ResponseEntity<Event> createEvent(
             @RequestBody Event event,
             HttpSession session) {
 
-        if (!isCoordinator(session)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        String username =
+                (String) session.getAttribute("username");
+
+        String role =
+                (String) session.getAttribute("role");
+
+
+        // Must be logged in as coordinator
+
+        if (username == null ||
+                !"COORDINATOR".equals(role)) {
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
         }
 
+
         try {
-            Event createdEvent = eventService.createEvent(event);
+
+            // IMPORTANT:
+            // Never trust createdBy from frontend.
+            // Set it from the logged-in session.
+
+            event.setCreatedBy(username);
+
+
+            Event createdEvent =
+                    eventService.createEvent(event);
+
+
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(createdEvent);
 
+
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+
+            return ResponseEntity
+                    .badRequest()
+                    .build();
         }
     }
 
-    // Only COORDINATOR can update an event
+
+    // ========================================
+    // UPDATE EVENT
+    // ONLY ORIGINAL CREATOR
+    // ========================================
+
     @PutMapping("/{id}")
     public ResponseEntity<Event> updateEvent(
             @PathVariable Long id,
             @RequestBody Event event,
             HttpSession session) {
 
-        if (!isCoordinator(session)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        String username =
+                (String) session.getAttribute("username");
+
+        String role =
+                (String) session.getAttribute("role");
+
+
+        // Must be coordinator
+
+        if (username == null ||
+                !"COORDINATOR".equals(role)) {
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
         }
 
+
+        // Find existing event
+
+        var existingEvent =
+                eventService.getEventById(id);
+
+
+        if (existingEvent.isEmpty()) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+
+
+        Event oldEvent =
+                existingEvent.get();
+
+
+        // Check ownership
+
+        if (oldEvent.getCreatedBy() == null ||
+                !oldEvent.getCreatedBy()
+                        .equals(username)) {
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
+        }
+
+
         try {
-            return eventService.updateEvent(id, event)
+
+            // Keep original owner.
+            // Frontend cannot change ownership.
+
+            event.setCreatedBy(username);
+
+
+            return eventService
+                    .updateEvent(id, event)
                     .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+                    .orElse(
+                            ResponseEntity
+                                    .notFound()
+                                    .build()
+                    );
+
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+
+            return ResponseEntity
+                    .badRequest()
+                    .build();
         }
     }
 
-    // Only COORDINATOR can delete an event
+
+    // ========================================
+    // DELETE EVENT
+    // ONLY ORIGINAL CREATOR
+    // ========================================
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(
             @PathVariable Long id,
             HttpSession session) {
 
-        if (!isCoordinator(session)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        String username =
+                (String) session.getAttribute("username");
+
+        String role =
+                (String) session.getAttribute("role");
+
+
+        // Must be coordinator
+
+        if (username == null ||
+                !"COORDINATOR".equals(role)) {
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
         }
+
+
+        // Find event
+
+        var existingEvent =
+                eventService.getEventById(id);
+
+
+        if (existingEvent.isEmpty()) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+
+
+        Event event =
+                existingEvent.get();
+
+
+        // Check ownership
+
+        if (event.getCreatedBy() == null ||
+                !event.getCreatedBy()
+                        .equals(username)) {
+
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
+        }
+
+
+        // Delete
 
         if (eventService.deleteEvent(id)) {
-            return ResponseEntity.noContent().build();
+
+            return ResponseEntity
+                    .noContent()
+                    .build();
         }
 
-        return ResponseEntity.notFound().build();
-    }
 
-    // Check whether the logged-in user is a coordinator
-    private boolean isCoordinator(HttpSession session) {
-
-        String role = (String) session.getAttribute("role");
-
-        return "COORDINATOR".equals(role);
+        return ResponseEntity
+                .notFound()
+                .build();
     }
 }

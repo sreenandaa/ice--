@@ -12,14 +12,23 @@
 
     <title>Coordinator Dashboard - InterCollege</title>
 
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/coordinator-dashboard.css">
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/coordinator-dashboard.css"
+    >
 
 </head>
+
 
 <body>
 
 <main class="coordinator-dashboard">
+
 
     <!-- =====================================
          HEADER
@@ -39,38 +48,57 @@
 
         </div>
 
-        <button
-            id="logoutButton"
-            class="logout-btn"
-        >
-            Logout
-        </button>
+
+        <div class="dashboard-actions">
+
+            <a
+                href="index.html"
+                class="home-btn"
+            >
+                Home
+            </a>
+
+            <button
+                id="logoutButton"
+                class="logout-btn"
+                type="button"
+            >
+                Logout
+            </button>
+
+        </div>
 
     </header>
 
 
+
     <!-- =====================================
-         CREATE EVENT
+         CREATE / EDIT EVENT
     ====================================== -->
 
     <section class="create-event-section">
 
+
         <div class="section-title">
 
-            <h2>
+            <h2 id="formTitle">
                 Add New Event
             </h2>
 
-            <p>
+            <p id="formSubtitle">
                 Create and publish an event for students.
             </p>
 
         </div>
 
 
+
         <form id="eventForm">
 
-            <!-- BASIC INFORMATION -->
+
+            <!-- =================================
+                 EVENT INFORMATION
+            ================================== -->
 
             <div class="form-section">
 
@@ -81,7 +109,8 @@
 
                 <div class="form-grid">
 
-                    <!-- Event Name -->
+
+                    <!-- EVENT NAME -->
 
                     <div class="form-group">
 
@@ -99,7 +128,8 @@
                     </div>
 
 
-                    <!-- College -->
+
+                    <!-- COLLEGE -->
 
                     <div class="form-group">
 
@@ -117,7 +147,8 @@
                     </div>
 
 
-                    <!-- Category -->
+
+                    <!-- CATEGORY -->
 
                     <div class="form-group">
 
@@ -179,7 +210,8 @@
                     </div>
 
 
-                    <!-- Date -->
+
+                    <!-- DATE -->
 
                     <div class="form-group">
 
@@ -198,7 +230,8 @@
                 </div>
 
 
-                <!-- Description -->
+
+                <!-- DESCRIPTION -->
 
                 <div class="form-group full-width">
 
@@ -218,18 +251,22 @@
             </div>
 
 
-            <!-- DATE & LOCATION -->
+
+            <!-- =================================
+                 DATE AND LOCATION
+            ================================== -->
 
             <div class="form-section">
 
                 <h3>
-                    Date & Location
+                    Date &amp; Location
                 </h3>
 
 
                 <div class="form-grid">
 
-                    <!-- Start Time -->
+
+                    <!-- START TIME -->
 
                     <div class="form-group">
 
@@ -246,7 +283,8 @@
                     </div>
 
 
-                    <!-- End Time -->
+
+                    <!-- END TIME -->
 
                     <div class="form-group">
 
@@ -263,7 +301,8 @@
                     </div>
 
 
-                    <!-- Venue -->
+
+                    <!-- VENUE -->
 
                     <div class="form-group">
 
@@ -281,7 +320,8 @@
                     </div>
 
 
-                    <!-- City -->
+
+                    <!-- CITY -->
 
                     <div class="form-group">
 
@@ -299,7 +339,8 @@
                     </div>
 
 
-                    <!-- Latitude -->
+
+                    <!-- LATITUDE -->
 
                     <div class="form-group">
 
@@ -317,7 +358,8 @@
                     </div>
 
 
-                    <!-- Longitude -->
+
+                    <!-- LONGITUDE -->
 
                     <div class="form-group">
 
@@ -339,7 +381,10 @@
             </div>
 
 
-            <!-- REGISTRATION DETAILS -->
+
+            <!-- =================================
+                 REGISTRATION DETAILS
+            ================================== -->
 
             <div class="form-section">
 
@@ -350,7 +395,8 @@
 
                 <div class="form-grid">
 
-                    <!-- Registration Link -->
+
+                    <!-- REGISTRATION LINK -->
 
                     <div class="form-group">
 
@@ -367,7 +413,8 @@
                     </div>
 
 
-                    <!-- Organizer -->
+
+                    <!-- ORGANIZER -->
 
                     <div class="form-group">
 
@@ -385,7 +432,8 @@
                     </div>
 
 
-                    <!-- Contact -->
+
+                    <!-- CONTACT -->
 
                     <div class="form-group">
 
@@ -403,7 +451,8 @@
                     </div>
 
 
-                    <!-- Maximum Participants -->
+
+                    <!-- MAX PARTICIPANTS -->
 
                     <div class="form-group">
 
@@ -423,7 +472,8 @@
                 </div>
 
 
-                <!-- Image URL -->
+
+                <!-- IMAGE URL -->
 
                 <div class="form-group full-width">
 
@@ -442,7 +492,10 @@
             </div>
 
 
-            <!-- MESSAGE -->
+
+            <!-- =================================
+                 MESSAGE
+            ================================== -->
 
             <p
                 id="eventMessage"
@@ -450,22 +503,39 @@
             ></p>
 
 
-            <!-- SUBMIT -->
+
+            <!-- =================================
+                 FORM BUTTONS
+            ================================== -->
 
             <div class="form-actions">
 
+
                 <button
                     type="submit"
+                    id="submitEventButton"
                     class="btn create-event-btn"
                 >
                     Add Event
                 </button>
 
+
+                <button
+                    type="button"
+                    id="cancelEditButton"
+                    class="cancel-btn"
+                    style="display: none;"
+                >
+                    Cancel Edit
+                </button>
+
             </div>
+
 
         </form>
 
     </section>
+
 
 
     <!-- =====================================
@@ -473,6 +543,7 @@
     ====================================== -->
 
     <section class="available-events-section">
+
 
         <div class="section-title">
 
@@ -487,7 +558,9 @@
         </div>
 
 
+
         <div id="eventsContainer"></div>
+
 
 
         <p
@@ -498,9 +571,12 @@
             No events available.
         </p>
 
+
     </section>
 
+
 </main>
+
 
 
 <script src="js/coordinator-dashboard.js"></script>
