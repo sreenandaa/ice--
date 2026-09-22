@@ -1,0 +1,305 @@
+/* ========================================
+   STUDENT DASHBOARD
+======================================== */
+
+.student-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 35px 25px 60px;
+}
+
+
+/* ========================================
+   HEADER
+======================================== */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 35px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 42px;
+}
+
+.dashboard-header p {
+    margin: 8px 0 0;
+    font-size: 18px;
+}
+
+
+/* ========================================
+   LOGOUT BUTTON
+======================================== */
+
+.logout-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+
+    background: #3f9277;
+    color: white;
+
+    transition: 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: #347a64;
+}
+
+
+/* ========================================
+   SEARCH
+======================================== */
+
+.search-section {
+    padding: 25px;
+    margin-bottom: 35px;
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+}
+
+.search-section h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 28px;
+}
+
+#searchInput {
+    width: 100%;
+    max-width: 700px;
+    box-sizing: border-box;
+
+    padding: 13px 16px;
+
+    border-radius: 8px;
+    border: 1px solid #aaa;
+
+    font-size: 16px;
+    outline: none;
+}
+
+#searchInput:focus {
+    border-color: #3f9277;
+}
+
+
+/* ========================================
+   EVENTS SECTION
+======================================== */
+
+.events-section h2 {
+    font-size: 30px;
+    margin-bottom: 22px;
+}
+
+
+/* ========================================
+   EVENT GRID
+======================================== */
+
+#eventsContainer {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(300px, 1fr)
+        );
+
+    gap: 22px;
+}
+
+
+/* ========================================
+   EVENT CARD
+======================================== */
+
+.event-card {
+    background: #0d211c;
+
+    border: 1px solid #285348;
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, 0.25);
+}
+
+.event-card-content {
+    padding: 24px;
+}
+
+
+/* ========================================
+   CATEGORY
+======================================== */
+
+.event-category {
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    background: #3f9277;
+    color: white;
+
+    font-size: 13px;
+
+    margin-bottom: 12px;
+}
+
+
+/* ========================================
+   EVENT TEXT
+======================================== */
+
+.event-card h3 {
+    margin: 0 0 15px;
+    font-size: 24px;
+}
+
+.event-card p {
+    margin: 8px 0;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.event-description {
+    margin-top: 15px !important;
+    opacity: 0.9;
+}
+
+
+/* ========================================
+   EVENT BUTTONS
+======================================== */
+
+.event-actions {
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+    margin-top: 22px;
+}
+
+.event-btn {
+    display: inline-block;
+
+    padding: 10px 17px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    background: #3f9277;
+    color: white;
+
+    transition: 0.2s ease;
+}
+
+.event-btn:hover {
+    background: #347a64;
+    transform: translateY(-1px);
+}
+
+
+/* ========================================
+   REGISTER BUTTON
+======================================== */
+
+.register-btn {
+    background: #3f9277;
+    color: white;
+
+    border: 1px solid #3f9277;
+}
+
+.register-btn:hover {
+    background: #347a64;
+}
+
+
+/* ========================================
+   NO EVENTS
+======================================== */
+
+.no-events {
+    padding: 30px;
+
+    text-align: center;
+
+    border: 1px dashed
+        rgba(255, 255, 255, 0.25);
+
+    border-radius: 12px;
+}
+
+
+/* ========================================
+   ERROR
+======================================== */
+
+.error-message {
+    padding: 25px;
+
+    text-align: center;
+
+    border-radius: 12px;
+
+    border: 1px solid
+        rgba(255, 100, 100, 0.4);
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+
+    .student-dashboard {
+        padding: 25px 15px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-header h1 {
+        font-size: 32px;
+    }
+
+    .events-section h2 {
+        font-size: 26px;
+    }
+
+    #eventsContainer {
+        grid-template-columns: 1fr;
+    }
+}

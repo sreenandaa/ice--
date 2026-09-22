@@ -2,46 +2,60 @@ let currentUser = null;
 let allEvents = [];
 
 
-// ==============================
-// GET CURRENT USER
-// ==============================
+// ========================================
+// LOAD LOGGED-IN USER
+// ========================================
 
 async function loadUser() {
 
-    const response =
-        await fetch("/api/auth/profile");
+    try {
 
-    if (!response.ok) {
+        const response =
+            await fetch("/api/auth/profile");
+
+        if (!response.ok) {
+
+            window.location.href =
+                "login.html";
+
+            return null;
+        }
+
+        const user =
+            await response.json();
+
+
+        // Only students should use this dashboard
+
+        if (user.role !== "STUDENT") {
+
+            window.location.href =
+                "coordinator-dashboard.html";
+
+            return null;
+        }
+
+
+        return user;
+
+    } catch (error) {
+
+        console.error(
+            "Could not load user:",
+            error
+        );
 
         window.location.href =
             "login.html";
 
         return null;
     }
-
-    const user =
-        await response.json();
-
-
-    // Student page should only be
-    // accessible by students.
-
-    if (user.role !== "STUDENT") {
-
-        window.location.href =
-            "coordinator-dashboard.html";
-
-        return null;
-    }
-
-
-    return user;
 }
 
 
-// ==============================
-// GET EVENTS
-// ==============================
+// ========================================
+// LOAD EVENTS
+// ========================================
 
 async function loadEvents() {
 
@@ -61,26 +75,23 @@ async function loadEvents() {
 }
 
 
-// ==============================
+// ========================================
 // CALCULATE RECOMMENDATION SCORE
-// ==============================
+// ========================================
 
 function calculateScore(event, user) {
 
     let score = 0;
 
 
-    // --------------------------
     // Location match
-    // --------------------------
 
     if (
         user.location &&
         event.city &&
         user.location
             .toLowerCase()
-            .trim()
-            ===
+            .trim() ===
         event.city
             .toLowerCase()
             .trim()
@@ -90,17 +101,14 @@ function calculateScore(event, user) {
     }
 
 
-    // --------------------------
     // College match
-    // --------------------------
 
     if (
         user.college &&
         event.college &&
         user.college
             .toLowerCase()
-            .trim()
-            ===
+            .trim() ===
         event.college
             .toLowerCase()
             .trim()
@@ -110,9 +118,7 @@ function calculateScore(event, user) {
     }
 
 
-    // --------------------------
-    // Interest / category match
-    // --------------------------
+    // Interest/category match
 
     if (
         Array.isArray(user.interests) &&
@@ -125,24 +131,34 @@ function calculateScore(event, user) {
                 .trim();
 
 
-        user.interests.forEach(interest => {
+        user.interests.forEach(
+            interest => {
 
-            const interestText =
-                interest
-                    .toLowerCase()
-                    .trim();
+                if (!interest) {
+                    return;
+                }
 
 
-            if (
-                category.includes(interestText) ||
-                interestText.includes(category)
-            ) {
+                const interestText =
+                    interest
+                        .toLowerCase()
+                        .trim();
 
-                score += 10;
+
+                if (
+                    category.includes(
+                        interestText
+                    ) ||
+                    interestText.includes(
+                        category
+                    )
+                ) {
+
+                    score += 10;
+                }
+
             }
-
-        });
-
+        );
     }
 
 
@@ -150,9 +166,9 @@ function calculateScore(event, user) {
 }
 
 
-// ==============================
+// ========================================
 // DISPLAY EVENTS
-// ==============================
+// ========================================
 
 function displayEvents(events) {
 
@@ -186,54 +202,95 @@ function displayEvents(events) {
     events.forEach(event => {
 
         const card =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         card.className =
-            "card";
+            "event-card";
+
+
+        // Register button only appears
+        // if the event has a registration link
+
+        let registerButton = "";
+
+
+        if (event.registrationLink) {
+
+            registerButton = `
+
+                <a
+                    href="${event.registrationLink}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="event-btn register-btn"
+                >
+                    Register Now
+                </a>
+
+            `;
+        }
 
 
         card.innerHTML = `
 
-            <h3>
-                ${event.name}
-            </h3>
+            <div class="event-card-content">
 
-            <p>
-                <strong>Category:</strong>
-                ${event.category}
-            </p>
+                <span class="event-category">
+                    ${event.category}
+                </span>
 
-            <p>
-                <strong>College:</strong>
-                ${event.college}
-            </p>
 
-            <p>
-                <strong>Location:</strong>
-                ${event.city}
-            </p>
+                <h3>
+                    ${event.name}
+                </h3>
 
-            <p>
-                <strong>Date:</strong>
-                ${event.date}
-            </p>
 
-            <p>
-                <strong>Status:</strong>
-                ${event.status}
-            </p>
+                <p>
+                    <strong>College:</strong>
+                    ${event.college}
+                </p>
 
-            <p>
-                ${event.description}
-            </p>
 
-            <a
-                href="event.html?id=${event.id}"
-                class="btn"
-            >
-                View Event
-            </a>
+                <p>
+                    <strong>Location:</strong>
+                    ${event.city}
+                </p>
+
+
+                <p>
+                    <strong>Date:</strong>
+                    ${event.date}
+                </p>
+
+
+                <p>
+                    <strong>Status:</strong>
+                    ${event.status}
+                </p>
+
+
+                <p class="event-description">
+                    ${event.description}
+                </p>
+
+
+                <div class="event-actions">
+
+                    <a
+                        href="event.html?id=${event.id}"
+                        class="event-btn"
+                    >
+                        View Event
+                    </a>
+
+                    ${registerButton}
+
+                </div>
+
+            </div>
 
         `;
 
@@ -241,13 +298,12 @@ function displayEvents(events) {
         container.appendChild(card);
 
     });
-
 }
 
 
-// ==============================
-// SEARCH
-// ==============================
+// ========================================
+// SEARCH EVENTS
+// ========================================
 
 function setupSearch() {
 
@@ -267,53 +323,120 @@ function setupSearch() {
                     .trim();
 
 
-            const filtered =
-                allEvents.filter(event => {
+            const filteredEvents =
+                allEvents.filter(
+                    event => {
 
-                    return (
+                        return (
 
-                        (event.name || "")
-                            .toLowerCase()
-                            .includes(search)
+                            (event.name || "")
+                                .toLowerCase()
+                                .includes(search)
 
-                        ||
+                            ||
 
-                        (event.category || "")
-                            .toLowerCase()
-                            .includes(search)
+                            (event.category || "")
+                                .toLowerCase()
+                                .includes(search)
 
-                        ||
+                            ||
 
-                        (event.college || "")
-                            .toLowerCase()
-                            .includes(search)
+                            (event.college || "")
+                                .toLowerCase()
+                                .includes(search)
 
-                        ||
+                            ||
 
-                        (event.city || "")
-                            .toLowerCase()
-                            .includes(search)
+                            (event.city || "")
+                                .toLowerCase()
+                                .includes(search)
 
-                    );
+                            ||
 
-                });
+                            (event.description || "")
+                                .toLowerCase()
+                                .includes(search)
+
+                        );
+
+                    }
+                );
 
 
-            displayEvents(filtered);
+            displayEvents(
+                filteredEvents
+            );
 
         }
     );
-
 }
 
 
-// ==============================
-// INITIALIZE
-// ==============================
+// ========================================
+// LOGOUT
+// ========================================
+
+function setupLogout() {
+
+    const logoutButton =
+        document.getElementById(
+            "logoutButton"
+        );
+
+
+    logoutButton.addEventListener(
+        "click",
+        async function () {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/auth/logout",
+                        {
+                            method: "POST"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Logout failed"
+                    );
+                }
+
+
+                window.location.href =
+                    "login.html";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+                alert(
+                    "Logout failed. Please try again."
+                );
+            }
+
+        }
+    );
+}
+
+
+// ========================================
+// INITIALIZE DASHBOARD
+// ========================================
 
 async function initializeDashboard() {
 
     try {
+
+        // Load current user
 
         currentUser =
             await loadUser();
@@ -324,23 +447,25 @@ async function initializeDashboard() {
         }
 
 
+        // Welcome message
+
         document.getElementById(
             "studentWelcome"
         ).textContent =
             `Welcome, ${currentUser.name}!`;
 
 
+        // Load events
+
         allEvents =
             await loadEvents();
 
 
-        // Add recommendation score
-        // to every event.
+        // Calculate recommendation scores
 
         const scoredEvents =
-            allEvents.map(event => {
-
-                return {
+            allEvents.map(
+                event => ({
 
                     event: event,
 
@@ -350,9 +475,8 @@ async function initializeDashboard() {
                             currentUser
                         )
 
-                };
-
-            });
+                })
+            );
 
 
         // Highest recommendation first
@@ -365,7 +489,8 @@ async function initializeDashboard() {
 
         const recommendedEvents =
             scoredEvents.map(
-                item => item.event
+                item =>
+                    item.event
             );
 
 
@@ -376,20 +501,37 @@ async function initializeDashboard() {
 
         setupSearch();
 
+        setupLogout();
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Dashboard error:",
+            error
+        );
+
 
         document.getElementById(
             "eventsContainer"
-        ).innerHTML =
-            "<p>Unable to load events.</p>";
+        ).innerHTML = `
 
+            <div class="error-message">
+
+                Unable to load events.
+
+                Please refresh the page.
+
+            </div>
+
+        `;
     }
-
 }
 
+
+// ========================================
+// START
+// ========================================
 
 document.addEventListener(
     "DOMContentLoaded",

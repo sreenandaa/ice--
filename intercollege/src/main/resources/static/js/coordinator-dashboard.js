@@ -1,47 +1,62 @@
 let currentUser = null;
 
 
-// ==============================
-// LOAD USER
-// ==============================
+// ========================================
+// LOAD LOGGED-IN USER
+// ========================================
 
 async function loadUser() {
 
-    const response =
-        await fetch("/api/auth/profile");
+    try {
+
+        const response =
+            await fetch("/api/auth/profile");
 
 
-    if (!response.ok) {
+        if (!response.ok) {
+
+            window.location.href =
+                "login.html";
+
+            return null;
+        }
+
+
+        const user =
+            await response.json();
+
+
+        // Only coordinators can use this page
+
+        if (user.role !== "COORDINATOR") {
+
+            window.location.href =
+                "student-dashboard.html";
+
+            return null;
+        }
+
+
+        return user;
+
+    } catch (error) {
+
+        console.error(
+            "Could not load user:",
+            error
+        );
 
         window.location.href =
             "login.html";
 
         return null;
     }
-
-
-    const user =
-        await response.json();
-
-
-    // Only coordinators allowed
-
-    if (user.role !== "COORDINATOR") {
-
-        window.location.href =
-            "student-dashboard.html";
-
-        return null;
-    }
-
-
-    return user;
 }
 
 
-// ==============================
+// ========================================
 // CREATE EVENT
-// ==============================
+// ========================================
 
 async function createEvent(event) {
 
@@ -55,45 +70,54 @@ async function createEvent(event) {
                 "eventName"
             ).value.trim(),
 
+
         description:
             document.getElementById(
                 "description"
             ).value.trim(),
+
 
         college:
             document.getElementById(
                 "college"
             ).value.trim(),
 
+
         category:
             document.getElementById(
                 "category"
             ).value,
+
 
         date:
             document.getElementById(
                 "date"
             ).value,
 
+
         startTime:
             document.getElementById(
                 "startTime"
             ).value,
+
 
         endTime:
             document.getElementById(
                 "endTime"
             ).value,
 
+
         venue:
             document.getElementById(
                 "venue"
             ).value.trim(),
 
+
         city:
             document.getElementById(
                 "city"
             ).value.trim(),
+
 
         latitude:
             Number(
@@ -102,6 +126,7 @@ async function createEvent(event) {
                 ).value
             ) || 0,
 
+
         longitude:
             Number(
                 document.getElementById(
@@ -109,25 +134,30 @@ async function createEvent(event) {
                 ).value
             ) || 0,
 
+
         registrationLink:
             document.getElementById(
                 "registrationLink"
             ).value.trim(),
+
 
         organizer:
             document.getElementById(
                 "organizer"
             ).value.trim(),
 
+
         contact:
             document.getElementById(
                 "contact"
             ).value.trim(),
 
+
         imageUrl:
             document.getElementById(
                 "imageUrl"
             ).value.trim(),
+
 
         maxParticipants:
             document.getElementById(
@@ -141,6 +171,15 @@ async function createEvent(event) {
                 : null
 
     };
+
+
+    const message =
+        document.getElementById(
+            "eventMessage"
+        );
+
+
+    message.textContent = "";
 
 
     try {
@@ -168,15 +207,21 @@ async function createEvent(event) {
 
         if (!response.ok) {
 
+            if (response.status === 403) {
+
+                throw new Error(
+                    "You are not allowed to create events."
+                );
+            }
+
+
             throw new Error(
-                "Could not create event"
+                "Could not create event."
             );
         }
 
 
-        document.getElementById(
-            "eventMessage"
-        ).textContent =
+        message.textContent =
             "Event created successfully!";
 
 
@@ -190,11 +235,14 @@ async function createEvent(event) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Create event error:",
+            error
+        );
 
-        document.getElementById(
-            "eventMessage"
-        ).textContent =
+
+        message.textContent =
+            error.message ||
             "Failed to create event.";
 
     }
@@ -202,11 +250,23 @@ async function createEvent(event) {
 }
 
 
-// ==============================
+// ========================================
 // LOAD EVENTS
-// ==============================
+// ========================================
 
 async function loadEvents() {
+
+    const container =
+        document.getElementById(
+            "eventsContainer"
+        );
+
+
+    const noEvents =
+        document.getElementById(
+            "noEventsMessage"
+        );
+
 
     try {
 
@@ -219,7 +279,7 @@ async function loadEvents() {
         if (!response.ok) {
 
             throw new Error(
-                "Could not load events"
+                "Could not load events."
             );
         }
 
@@ -228,13 +288,20 @@ async function loadEvents() {
             await response.json();
 
 
-        const container =
-            document.getElementById(
-                "eventsContainer"
-            );
-
-
         container.innerHTML = "";
+
+
+        if (events.length === 0) {
+
+            noEvents.style.display =
+                "block";
+
+            return;
+        }
+
+
+        noEvents.style.display =
+            "none";
 
 
         events.forEach(event => {
@@ -246,53 +313,49 @@ async function loadEvents() {
 
 
             card.className =
-                "card";
+                "event-card";
 
 
             card.innerHTML = `
+
+                <span class="event-category">
+                    ${event.category}
+                </span>
+
 
                 <h3>
                     ${event.name}
                 </h3>
 
-                <p>
-                    <strong>
-                        Category:
-                    </strong>
-
-                    ${event.category}
-                </p>
 
                 <p>
-                    <strong>
-                        Date:
-                    </strong>
-
+                    <strong>Date:</strong>
                     ${event.date}
                 </p>
 
-                <p>
-                    <strong>
-                        Location:
-                    </strong>
 
+                <p>
+                    <strong>Location:</strong>
                     ${event.city}
                 </p>
 
-                <p>
-                    <strong>
-                        Status:
-                    </strong>
 
+                <p>
+                    <strong>Status:</strong>
                     ${event.status}
                 </p>
 
-                <a
-                    href="event.html?id=${event.id}"
-                    class="btn"
-                >
-                    View Event
-                </a>
+
+                <div class="event-actions">
+
+                    <a
+                        href="event.html?id=${event.id}"
+                        class="event-btn"
+                    >
+                        View Event
+                    </a>
+
+                </div>
 
             `;
 
@@ -306,16 +369,91 @@ async function loadEvents() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Load events error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="error-message">
+
+                Unable to load events.
+
+                Please refresh the page.
+
+            </div>
+
+        `;
 
     }
 
 }
 
 
-// ==============================
+// ========================================
+// LOGOUT
+// ========================================
+
+function setupLogout() {
+
+    const logoutButton =
+        document.getElementById(
+            "logoutButton"
+        );
+
+
+    logoutButton.addEventListener(
+        "click",
+        async function () {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/auth/logout",
+                        {
+                            method: "POST"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Logout failed"
+                    );
+                }
+
+
+                window.location.href =
+                    "login.html";
+
+
+            } catch (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+
+                alert(
+                    "Logout failed. Please try again."
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ========================================
 // INITIALIZE
-// ==============================
+// ========================================
 
 async function initialize() {
 
@@ -342,10 +480,17 @@ async function initialize() {
     );
 
 
+    setupLogout();
+
+
     await loadEvents();
 
 }
 
+
+// ========================================
+// START
+// ========================================
 
 document.addEventListener(
     "DOMContentLoaded",

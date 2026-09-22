@@ -52,4 +52,22 @@
   "college" : "TKM College of Engineering",
   "location" : "Kollam",
   "interests" : [ "Web development" ]
+}, {
+  "id" : 7,
+  "name" : "Anjana S",
+  "username" : "anjana",
+  "password" : "$2a$10$MHT308DJ/4KGKILwAFZzkuKYZfumKjNn7wiFJgn2o/ZSU.x9gvE.S",
+  "role" : "STUDENT",
+  "college" : "TKM College of Engineering",
+  "location" : "Kollam",
+  "interests" : [ "AI" ]
+}, {
+  "id" : 8,
+  "name" : "Lakshmi Pradeep",
+  "username" : "lakshmi",
+  "password" : "$2a$10$piPs39jBVKM1qPA6pxxVo.srY18qIAch.jjZXort0RcPBGAOE/45C",
+  "role" : "COORDINATOR",
+  "college" : "College of Engineering, Trivandrum",
+  "location" : "Trivandrum",
+  "interests" : [ "Robitics" ]
 } ]
