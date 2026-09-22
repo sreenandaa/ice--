@@ -27,56 +27,11 @@
   "interests" : [ "AI" ]
 }, {
   "id" : 4,
-  "name" : "Sreenanda V H",
-  "username" : "sree",
-  "password" : "$2a$10$20vGmkRXMX47uY0dnE//Xu6EfEO98jO.7wA2/WRQanxlk7/41GLve",
-  "role" : "STUDENT",
-  "college" : "TKM College of Engineering",
-  "location" : "Kollam",
-  "interests" : [ "Web development" ]
-}, {
-  "id" : 5,
-  "name" : "Aish",
-  "username" : "aish",
-  "password" : "$2a$10$YJomVSvTfzKnE0grId19MOdWMHuKaKe7qIoGmPuvSr7xMZup/cNii",
+  "name" : "Niharika",
+  "username" : "niharika",
+  "password" : "$2a$10$EHcStfuOKNjI3qwVXDElf.MWLj8cj6bGOqHmQzdH9C931XGZBnByC",
   "role" : "COORDINATOR",
-  "college" : "TKM College of Engineering",
+  "college" : "TKM",
   "location" : "Kollam",
-  "interests" : [ "Web development" ]
-}, {
-  "id" : 6,
-  "name" : "Sreenanda V H",
-  "username" : "ssrrr",
-  "password" : "$2a$10$N4wCvfyQAaMdmvq3kPEufegCQsh45CFHV5WS254W1SbiH4OzJQ2tm",
-  "role" : "STUDENT",
-  "college" : "TKM College of Engineering",
-  "location" : "Kollam",
-  "interests" : [ "Web development" ]
-}, {
-  "id" : 7,
-  "name" : "Anjana S",
-  "username" : "anjana",
-  "password" : "$2a$10$MHT308DJ/4KGKILwAFZzkuKYZfumKjNn7wiFJgn2o/ZSU.x9gvE.S",
-  "role" : "STUDENT",
-  "college" : "TKM College of Engineering",
-  "location" : "Kollam",
-  "interests" : [ "AI" ]
-}, {
-  "id" : 8,
-  "name" : "Lakshmi Pradeep",
-  "username" : "lakshmi",
-  "password" : "$2a$10$piPs39jBVKM1qPA6pxxVo.srY18qIAch.jjZXort0RcPBGAOE/45C",
-  "role" : "COORDINATOR",
-  "college" : "College of Engineering, Trivandrum",
-  "location" : "Trivandrum",
-  "interests" : [ "Robitics" ]
-}, {
-  "id" : 9,
-  "name" : "Riona",
-  "username" : "TheChickenNugget",
-  "password" : "$2a$10$AmS0kpBchix0leiRIWFC0.MCcmsDlKzcnpwfjwdRLRj.iCcTNCcIC",
-  "role" : "COORDINATOR",
-  "college" : "College of Engineering, Trivandrum",
-  "location" : "Kollam",
-  "interests" : [ "AI" ]
+  "interests" : [ "ALL" ]
 } ]
