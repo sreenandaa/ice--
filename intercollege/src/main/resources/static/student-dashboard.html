@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Dashboard - InterCollege</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<main class="container">
+
+    <h1>Student Dashboard</h1>
+
+    <p id="studentWelcome">
+        Loading...
+    </p>
+
+
+    <section class="card">
+
+        <h2>Find Events</h2>
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search events..."
+        >
+
+    </section>
+
+
+    <section>
+
+        <h2>Recommended Events</h2>
+
+        <div id="eventsContainer"></div>
+
+        <p
+            id="noEventsMessage"
+            style="display:none;"
+        >
+            No events found.
+        </p>
+
+    </section>
+
+</main>
+
+<script src="js/student-dashboard.js"></script>
+
+</body>
+
+</html>

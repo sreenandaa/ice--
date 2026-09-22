@@ -80,6 +80,10 @@ if (registerForm) {
 // LOGIN
 // ==============================
 
+// ==============================
+// LOGIN
+// ==============================
+
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
@@ -94,9 +98,12 @@ if (loginForm) {
         const password =
             document.getElementById("password").value;
 
+        const loginMessage =
+            document.getElementById("loginMessage");
+
         try {
 
-            const response = await fetch("/api/auth/login", {
+            const loginResponse = await fetch("/api/auth/login", {
 
                 method: "POST",
 
@@ -111,28 +118,62 @@ if (loginForm) {
 
             });
 
-            const data = await response.json();
+            if (!loginResponse.ok) {
 
-            if (!response.ok) {
+                const errorData =
+                    await loginResponse.json()
+                        .catch(() => ({}));
+
                 throw new Error(
-                    data.message || "Login failed"
+                    errorData.message ||
+                    "Invalid username or password"
                 );
             }
 
-            document.getElementById("loginMessage").textContent =
+
+            // Get the logged-in user's details
+            const profileResponse =
+                await fetch("/api/auth/profile");
+
+
+            if (!profileResponse.ok) {
+
+                throw new Error(
+                    "Could not load user profile"
+                );
+            }
+
+
+            const user =
+                await profileResponse.json();
+
+
+            loginMessage.textContent =
                 "Login successful! Redirecting...";
 
-            setTimeout(() => {
-                window.location.href = "dashboard.html";
-            }, 500);
+
+            // Redirect according to role
+
+            if (user.role === "COORDINATOR") {
+
+                window.location.href =
+                    "coordinator-dashboard.html";
+
+            } else {
+
+                window.location.href =
+                    "student-dashboard.html";
+            }
+
 
         } catch (error) {
 
             console.error(error);
 
-            document.getElementById("loginMessage").textContent =
+            loginMessage.textContent =
                 error.message;
         }
 
     });
+
 }

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Dashboard - InterCollege</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<main class="container">
+
+    <h1>Recommended Events</h1>
+
+    <p id="welcomeMessage"></p>
+
+    <div id="filters">
+
+        <label>Category</label>
+
+        <select id="categoryFilter">
+
+            <option value="">All Categories</option>
+
+            <option value="TECHNICAL">
+                Technical
+            </option>
+
+            <option value="CULTURAL">
+                Cultural
+            </option>
+
+            <option value="SPORTS">
+                Sports
+            </option>
+
+            <option value="WORKSHOP">
+                Workshop
+            </option>
+
+            <option value="HACKATHON">
+                Hackathon
+            </option>
+
+        </select>
+
+        <label>Location</label>
+
+        <input
+            type="text"
+            id="locationFilter"
+            placeholder="Enter city"
+        >
+
+        <button
+            id="filterButton"
+            class="btn"
+        >
+            Apply Filters
+        </button>
+
+    </div>
+
+    <hr>
+
+    <h2>Recommended for You</h2>
+
+    <div id="recommendedEvents"></div>
+
+    <p id="message"></p>
+
+    <br>
+
+    <button
+        id="logoutButton"
+        class="btn"
+    >
+        Logout
+    </button>
+
+</main>
+
+<script src="js/student.js"></script>
+
+</body>
+
+</html>

@@ -2,7 +2,7 @@ package com.example.intercollege.controller;
 
 import com.example.intercollege.model.Event;
 import com.example.intercollege.service.EventService;
-
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,101 +16,88 @@ public class EventController {
 
     private final EventService eventService;
 
-
     public EventController(EventService eventService) {
         this.eventService = eventService;
     }
 
-
-    // GET /api/events
+    // Anyone who is logged in can view events
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents() {
-
-        return ResponseEntity.ok(
-                eventService.getAllEvents()
-        );
+        return ResponseEntity.ok(eventService.getAllEvents());
     }
 
-
-    // GET /api/events/{id}
+    // Anyone who is logged in can view one event
     @GetMapping("/{id}")
-    public ResponseEntity<Event> getEventById(
-            @PathVariable Long id) {
-
-        return eventService
-                .getEventById(id)
+    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
+        return eventService.getEventById(id)
                 .map(ResponseEntity::ok)
-                .orElse(
-                        ResponseEntity
-                                .notFound()
-                                .build()
-                );
+                .orElse(ResponseEntity.notFound().build());
     }
 
-
-    // POST /api/events
+    // Only COORDINATOR can create an event
     @PostMapping
     public ResponseEntity<Event> createEvent(
-            @RequestBody Event event) {
+            @RequestBody Event event,
+            HttpSession session) {
+
+        if (!isCoordinator(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         try {
-
-            Event createdEvent =
-                    eventService.createEvent(event);
-
+            Event createdEvent = eventService.createEvent(event);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(createdEvent);
 
         } catch (IllegalArgumentException e) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .build();
+            return ResponseEntity.badRequest().build();
         }
     }
 
-
-    // PUT /api/events/{id}
+    // Only COORDINATOR can update an event
     @PutMapping("/{id}")
     public ResponseEntity<Event> updateEvent(
             @PathVariable Long id,
-            @RequestBody Event event) {
+            @RequestBody Event event,
+            HttpSession session) {
+
+        if (!isCoordinator(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         try {
-
-            return eventService
-                    .updateEvent(id, event)
+            return eventService.updateEvent(id, event)
                     .map(ResponseEntity::ok)
-                    .orElse(
-                            ResponseEntity
-                                    .notFound()
-                                    .build()
-                    );
+                    .orElse(ResponseEntity.notFound().build());
 
         } catch (IllegalArgumentException e) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .build();
+            return ResponseEntity.badRequest().build();
         }
     }
 
-
-    // DELETE /api/events/{id}
+    // Only COORDINATOR can delete an event
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            HttpSession session) {
 
-        if (eventService.deleteEvent(id)) {
-
-            return ResponseEntity
-                    .noContent()
-                    .build();
+        if (!isCoordinator(session)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        return ResponseEntity
-                .notFound()
-                .build();
+        if (eventService.deleteEvent(id)) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    // Check whether the logged-in user is a coordinator
+    private boolean isCoordinator(HttpSession session) {
+
+        String role = (String) session.getAttribute("role");
+
+        return "COORDINATOR".equals(role);
     }
 }

@@ -19,18 +19,91 @@ async function loadEvent() {
 
     try {
 
+        // ==============================
+        // LOAD LOGGED-IN USER
+        // ==============================
+
+        const profileResponse =
+            await fetch("/api/auth/profile");
+
+
+        if (!profileResponse.ok) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        const currentUser =
+            await profileResponse.json();
+        const backButton =
+    document.getElementById("backToDashboard");
+
+if (currentUser.role === "STUDENT") {
+
+    backButton.href =
+        "student-dashboard.html";
+
+} else if (currentUser.role === "COORDINATOR") {
+
+    backButton.href =
+        "coordinator-dashboard.html";
+}
+
+
+        // ==============================
+        // LOAD EVENT
+        // ==============================
+
         const response =
             await fetch(`/api/events/${eventId}`);
 
 
         if (!response.ok) {
-            throw new Error("Event not found");
+
+            throw new Error(
+                "Event not found"
+            );
         }
 
 
         const event =
             await response.json();
 
+
+        // ==============================
+        // REGISTER BUTTON
+        // ONLY FOR STUDENTS
+        // ==============================
+
+        let registrationButton = "";
+
+
+        if (
+            currentUser.role === "STUDENT" &&
+            event.registrationLink
+        ) {
+
+            registrationButton = `
+
+                <a
+                    href="${event.registrationLink}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn registration-button"
+                >
+                    Register for Event
+                </a>
+
+            `;
+        }
+
+
+        // ==============================
+        // DISPLAY EVENT
+        // ==============================
 
         document.getElementById("eventDetails")
             .innerHTML = `
@@ -78,14 +151,7 @@ async function loadEvent() {
                     ${event.contact}
                 </p>
 
-                <a
-                    href="${event.registrationLink}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn registration-button"
-                >
-                    Register for Event
-                </a>
+                ${registrationButton}
 
             </div>
 

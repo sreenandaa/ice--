@@ -1,1 +1,22 @@
-[]
+[ {
+  "id" : 1,
+  "name" : "Hacksmart",
+  "description" : "hackathon event",
+  "college" : "TKM College of Engineering",
+  "category" : "Other",
+  "date" : [ 2026, 10, 15 ],
+  "startTime" : [ 12, 0 ],
+  "endTime" : [ 16, 50 ],
+  "venue" : "APJ Hall",
+  "city" : "Kollam",
+  "latitude" : 500.0,
+  "longitude" : 679.0,
+  "registrationLink" : "http://localhost:8080/register.html",
+  "organizer" : "iei",
+  "contact" : "7890",
+  "imageUrl" : "https://news.microsoft.com/en-in/driving-cultural-transformation-microsoft-hosts-worlds-largest-private-hackathon/",
+  "maxParticipants" : 100,
+  "createdAt" : [ 2026, 9, 22, 11, 54, 13, 914720300 ],
+  "updatedAt" : [ 2026, 9, 22, 11, 54, 13, 914720300 ],
+  "status" : "Upcoming"
+} ]

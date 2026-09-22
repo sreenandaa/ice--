@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Coordinator - InterCollege</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<main class="container">
+
+    <h1>Coordinator Dashboard</h1>
+
+    <p>Add a new college event</p>
+
+    <form id="eventForm">
+
+        <label>Event Name</label>
+        <input
+            type="text"
+            id="name"
+            required
+        >
+
+        <label>Description</label>
+        <textarea
+            id="description"
+            required
+        ></textarea>
+
+        <label>College</label>
+        <input
+            type="text"
+            id="college"
+            required
+        >
+
+        <label>Category</label>
+
+        <select id="category" required>
+
+            <option value="">Select category</option>
+
+            <option value="TECHNICAL">
+                Technical
+            </option>
+
+            <option value="CULTURAL">
+                Cultural
+            </option>
+
+            <option value="SPORTS">
+                Sports
+            </option>
+
+            <option value="WORKSHOP">
+                Workshop
+            </option>
+
+            <option value="HACKATHON">
+                Hackathon
+            </option>
+
+        </select>
+
+        <label>Date</label>
+        <input
+            type="date"
+            id="date"
+            required
+        >
+
+        <label>Start Time</label>
+        <input
+            type="time"
+            id="startTime"
+            required
+        >
+
+        <label>End Time</label>
+        <input
+            type="time"
+            id="endTime"
+            required
+        >
+
+        <label>Venue</label>
+        <input
+            type="text"
+            id="venue"
+            required
+        >
+
+        <label>City</label>
+        <input
+            type="text"
+            id="city"
+            required
+        >
+
+        <label>Registration Link</label>
+        <input
+            type="url"
+            id="registrationLink"
+        >
+
+        <label>Organizer</label>
+        <input
+            type="text"
+            id="organizer"
+        >
+
+        <label>Contact</label>
+        <input
+            type="text"
+            id="contact"
+        >
+
+        <button
+            type="submit"
+            class="btn"
+        >
+            Add Event
+        </button>
+
+    </form>
+
+    <p id="eventMessage"></p>
+
+    <br>
+
+    <button
+        id="logoutButton"
+        class="btn"
+    >
+        Logout
+    </button>
+
+</main>
+
+<script src="js/coordinator.js"></script>
+
+</body>
+
+</html>
