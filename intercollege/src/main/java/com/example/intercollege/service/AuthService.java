@@ -3,10 +3,8 @@ package com.example.intercollege.service;
 import com.example.intercollege.model.User;
 import com.example.intercollege.repository.UserRepository;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -30,21 +28,7 @@ public class AuthService {
             throw new RuntimeException("Username already exists");
         }
 
-        // Set default role if none is provided
-        // Set default role if none is provided
-if (user.getRole() == null || user.getRole().isBlank()) {
-    user.setRole("STUDENT");
-}
-
-// Only STUDENT and COORDINATOR roles are allowed
-if (!user.getRole().equals("STUDENT")
-        && !user.getRole().equals("COORDINATOR")) {
-
-   throw new ResponseStatusException(
-        HttpStatus.BAD_REQUEST,
-        "Role must be STUDENT or COORDINATOR"
-);
-}
+        user.setRole("STUDENT");
 
         // Hash the password before saving
         user.setPassword(

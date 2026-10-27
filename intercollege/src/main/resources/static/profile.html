@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Profile - InterCollege</title>
+    <title>My Profile - InterCollege</title>
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/profile.css">
@@ -21,51 +21,116 @@
 
 <main class="container profile-page">
 
-    <a href="dashboard.html">
-        ← Back to Events
+    <a
+        href="student-dashboard.html"
+        id="backToDashboard"
+        class="back-link"
+    >
+        ← Back to Dashboard
     </a>
+
 
     <div class="profile-card card">
 
         <h1>My Profile</h1>
 
-        <div class="profile-info">
+        <p
+            id="profileMessage"
+            class="profile-message"
+        >
+            Loading profile...
+        </p>
 
-            <p>
-                <strong>Name:</strong>
-                <span id="profileName">-</span>
-            </p>
 
-            <p>
-                <strong>Username:</strong>
-                <span id="profileUsername">-</span>
-            </p>
+        <div
+            id="profileInfo"
+            class="profile-info"
+            style="display: none;"
+        >
 
-            <p>
-                <strong>College:</strong>
-                <span id="profileCollege">-</span>
-            </p>
+            <div class="profile-row">
 
-            <p>
-                <strong>Location:</strong>
-                <span id="profileLocation">-</span>
-            </p>
+                <strong>Name</strong>
 
-            <p>
-                <strong>Interests:</strong>
-                <span id="profileInterests">-</span>
-            </p>
+                <span id="profileName">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="profile-row">
+
+                <strong>Username</strong>
+
+                <span id="profileUsername">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="profile-row">
+
+                <strong>Role</strong>
+
+                <span id="profileRole">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="profile-row">
+
+                <strong>College</strong>
+
+                <span id="profileCollege">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="profile-row">
+
+                <strong>Location</strong>
+
+                <span id="profileLocation">
+                    -
+                </span>
+
+            </div>
+
+
+            <div class="profile-row">
+
+                <strong>Interests</strong>
+
+                <span id="profileInterests">
+                    -
+                </span>
+
+            </div>
 
         </div>
 
     </div>
-<button id="logoutButton" class="btn">
-    Logout
-</button>
+
+
+    <button
+        id="logoutButton"
+        class="logout-btn"
+        type="button"
+    >
+        Logout
+    </button>
 
 </main>
+
 
 <script src="js/profile.js"></script>
 
 </body>
+
 </html>

@@ -5,9 +5,8 @@ import com.example.intercollege.repository.EventRepository;
 
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -17,36 +16,54 @@ public class EventService {
 
     private final EventRepository eventRepository;
 
-
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
     }
 
-
-    // ---------- GET ALL ----------
+    // ========================================
+    // GET ALL EVENTS
+    // LATEST EVENT FIRST
+    // ========================================
 
     public List<Event> getAllEvents() {
 
-        return eventRepository.findAll();
+        List<Event> events = eventRepository.findAll();
+
+        events.sort(
+            Comparator
+                .comparing(
+                    Event::getDate,
+                    Comparator.nullsLast(Comparator.reverseOrder())
+                )
+                .thenComparing(
+                    Event::getStartTime,
+                    Comparator.nullsLast(Comparator.reverseOrder())
+                )
+                .thenComparing(
+                    Event::getCreatedAt,
+                    Comparator.nullsLast(Comparator.reverseOrder())
+                )
+        );
+
+        return events;
     }
 
-
-    // ---------- GET BY ID ----------
+    // ========================================
+    // GET EVENT BY ID
+    // ========================================
 
     public Optional<Event> getEventById(Long id) {
-
         return eventRepository.findById(id);
     }
 
-
-    // ---------- CREATE ----------
+    // ========================================
+    // CREATE EVENT
+    // ========================================
 
     public Event createEvent(Event event) {
 
         validateEvent(event);
 
-
-        // Generate next ID
         long nextId =
                 eventRepository.findAll()
                         .stream()
@@ -57,76 +74,64 @@ public class EventService {
                         .max()
                         .orElse(0) + 1;
 
-
         event.setId(nextId);
 
-
-        LocalDateTime now =
-                LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
 
         event.setCreatedAt(now);
         event.setUpdatedAt(now);
 
-
         return eventRepository.save(event);
     }
 
-
-    // ---------- UPDATE ----------
+    // ========================================
+    // UPDATE EVENT
+    // ========================================
 
     public Optional<Event> updateEvent(
             Long id,
             Event event) {
 
-
         Optional<Event> existing =
                 eventRepository.findById(id);
-
 
         if (existing.isEmpty()) {
             return Optional.empty();
         }
 
-
         validateEvent(event);
-
 
         Event oldEvent = existing.get();
 
-
         event.setId(id);
 
-
-        // Don't change original creation time
         event.setCreatedAt(
                 oldEvent.getCreatedAt()
         );
 
-
         event.setUpdatedAt(
                 LocalDateTime.now()
         );
-
 
         return Optional.of(
                 eventRepository.update(event)
         );
     }
 
-
-    // ---------- DELETE ----------
+    // ========================================
+    // DELETE EVENT
+    // ========================================
 
     public boolean deleteEvent(Long id) {
-
         return eventRepository.deleteById(id);
     }
 
-
-    // ---------- VALIDATION ----------
+    // ========================================
+    // VALIDATION
+    // ========================================
 
     private void validateEvent(Event event) {
 
-        // Name
         if (isBlank(event.getName())) {
 
             throw new IllegalArgumentException(
@@ -134,8 +139,6 @@ public class EventService {
             );
         }
 
-
-        // Description
         if (isBlank(event.getDescription())) {
 
             throw new IllegalArgumentException(
@@ -143,8 +146,6 @@ public class EventService {
             );
         }
 
-
-        // College
         if (isBlank(event.getCollege())) {
 
             throw new IllegalArgumentException(
@@ -152,14 +153,8 @@ public class EventService {
             );
         }
 
+        validateCategory(event.getCategory());
 
-        // Category
-        validateCategory(
-                event.getCategory()
-        );
-
-
-        // Date
         if (event.getDate() == null) {
 
             throw new IllegalArgumentException(
@@ -167,8 +162,6 @@ public class EventService {
             );
         }
 
-
-        // Start time
         if (event.getStartTime() == null) {
 
             throw new IllegalArgumentException(
@@ -176,8 +169,6 @@ public class EventService {
             );
         }
 
-
-        // End time
         if (event.getEndTime() == null) {
 
             throw new IllegalArgumentException(
@@ -185,8 +176,6 @@ public class EventService {
             );
         }
 
-
-        // Time validation
         if (!event.getEndTime()
                 .isAfter(event.getStartTime())) {
 
@@ -195,8 +184,6 @@ public class EventService {
             );
         }
 
-
-        // Venue
         if (isBlank(event.getVenue())) {
 
             throw new IllegalArgumentException(
@@ -204,8 +191,6 @@ public class EventService {
             );
         }
 
-
-        // City
         if (isBlank(event.getCity())) {
 
             throw new IllegalArgumentException(
@@ -213,8 +198,6 @@ public class EventService {
             );
         }
 
-
-        // Organizer
         if (isBlank(event.getOrganizer())) {
 
             throw new IllegalArgumentException(
@@ -222,8 +205,6 @@ public class EventService {
             );
         }
 
-
-        // Contact
         if (isBlank(event.getContact())) {
 
             throw new IllegalArgumentException(
@@ -231,8 +212,6 @@ public class EventService {
             );
         }
 
-
-        // Participants
         if (event.getMaxParticipants() != null &&
                 event.getMaxParticipants() <= 0) {
 
@@ -242,13 +221,13 @@ public class EventService {
         }
     }
 
-
-    // ---------- CATEGORY VALIDATION ----------
+    // ========================================
+    // CATEGORY VALIDATION
+    // ========================================
 
     private void validateCategory(String category) {
 
         Set<String> validCategories = Set.of(
-
                 "Technical",
                 "Cultural",
                 "Talk Session",
@@ -261,14 +240,12 @@ public class EventService {
                 "Other"
         );
 
-
         if (isBlank(category)) {
 
             throw new IllegalArgumentException(
                     "Category is required"
             );
         }
-
 
         if (!validCategories.contains(category)) {
 
@@ -278,8 +255,9 @@ public class EventService {
         }
     }
 
-
-    // ---------- HELPER ----------
+    // ========================================
+    // HELPER
+    // ========================================
 
     private boolean isBlank(String value) {
 

@@ -13,7 +13,6 @@ if (registerForm) {
         const name = document.getElementById("name").value.trim();
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value;
-        const role = document.getElementById("role").value;
         const college = document.getElementById("college").value.trim();
         const location = document.getElementById("location").value.trim();
 
@@ -41,7 +40,6 @@ if (registerForm) {
                     name: name,
                     username: username,
                     password: password,
-                    role: role,
                     college: college,
                     location: location,
                     interests: interests

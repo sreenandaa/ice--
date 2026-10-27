@@ -1,5 +1,10 @@
 let currentUser = null;
+
 let allEvents = [];
+
+let reviewsByEvent = {};
+
+let selectedRatings = {};
 
 
 // ========================================
@@ -13,6 +18,7 @@ async function loadUser() {
         const response =
             await fetch("/api/auth/profile");
 
+
         if (!response.ok) {
 
             window.location.href =
@@ -21,11 +27,12 @@ async function loadUser() {
             return null;
         }
 
+
         const user =
             await response.json();
 
 
-        // Only students should use this dashboard
+        // Only students can use this dashboard
 
         if (user.role !== "STUDENT") {
 
@@ -45,8 +52,10 @@ async function loadUser() {
             error
         );
 
+
         window.location.href =
             "login.html";
+
 
         return null;
     }
@@ -72,6 +81,63 @@ async function loadEvents() {
 
 
     return await response.json();
+}
+
+
+// ========================================
+// LOAD REVIEWS
+// ========================================
+
+async function loadReviewsForEvents(events) {
+
+    reviewsByEvent = {};
+
+
+    const completedEvents =
+        events.filter(
+            event =>
+                event.status === "Completed"
+        );
+
+
+    await Promise.all(
+        completedEvents.map(
+            async event => {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/api/reviews/event/${event.id}`
+                        );
+
+
+                    if (!response.ok) {
+                        return;
+                    }
+
+
+                    const reviews =
+                        await response.json();
+
+
+                    reviewsByEvent[event.id] =
+                        reviews;
+
+                } catch (error) {
+
+                    console.error(
+                        `Could not load reviews for event ${event.id}:`,
+                        error
+                    );
+
+
+                    reviewsByEvent[event.id] =
+                        [];
+                }
+            }
+        )
+    );
 }
 
 
@@ -167,6 +233,334 @@ function calculateScore(event, user) {
 
 
 // ========================================
+// ESCAPE HTML
+// ========================================
+
+function escapeHtml(value) {
+
+    if (value === null ||
+        value === undefined) {
+
+        return "";
+    }
+
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+// ========================================
+// FORMAT DATE
+// ========================================
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+        return "-";
+    }
+
+
+    const date =
+        new Date(`${dateString}T00:00:00`);
+
+
+    if (Number.isNaN(date.getTime())) {
+        return dateString;
+    }
+
+
+    return date.toLocaleDateString(
+        undefined,
+        {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        }
+    );
+}
+
+
+// ========================================
+// CREATE STARS
+// ========================================
+
+function createStars(rating) {
+
+    let stars = "";
+
+    for (let i = 1; i <= 5; i++) {
+
+        stars +=
+            i <= rating
+                ? "★"
+                : "☆";
+    }
+
+    return stars;
+}
+
+
+// ========================================
+// CALCULATE AVERAGE RATING
+// ========================================
+
+function calculateAverageRating(reviews) {
+
+    if (!reviews ||
+        reviews.length === 0) {
+
+        return null;
+    }
+
+
+    const total =
+        reviews.reduce(
+            (sum, review) =>
+                sum + Number(review.rating || 0),
+            0
+        );
+
+
+    return (
+        total / reviews.length
+    ).toFixed(1);
+}
+
+
+// ========================================
+// CREATE REVIEW SECTION
+// ========================================
+
+function createReviewSection(event) {
+
+    const reviews =
+        reviewsByEvent[event.id] || [];
+
+
+    const average =
+        calculateAverageRating(reviews);
+
+
+    const myReview =
+        reviews.find(
+            review =>
+                review.username ===
+                currentUser.username
+        );
+
+
+    let reviewsList = "";
+
+
+    if (reviews.length > 0) {
+
+        reviewsList =
+            reviews.map(
+                review => {
+
+                    return `
+
+                        <div class="review-item">
+
+                            <div class="review-item-header">
+
+                                <strong>
+                                    ${escapeHtml(
+                                        review.username
+                                    )}
+                                </strong>
+
+                                <span class="review-stars">
+                                    ${createStars(
+                                        review.rating
+                                    )}
+                                </span>
+
+                            </div>
+
+
+                            <p>
+                                ${escapeHtml(
+                                    review.review
+                                )}
+                            </p>
+
+                        </div>
+
+                    `;
+                }
+            ).join("");
+
+    } else {
+
+        reviewsList = `
+            <p class="no-reviews">
+                No reviews yet. Be the first to review this event.
+            </p>
+        `;
+    }
+
+
+    // If the student has already reviewed it
+
+    if (myReview) {
+
+        return `
+
+            <div class="review-section">
+
+                <h4>Event Reviews</h4>
+
+
+                ${
+                    average
+                        ? `
+                            <p class="average-rating">
+                                Average Rating:
+                                <strong>
+                                    ⭐ ${average}/5
+                                </strong>
+                                (${reviews.length}
+                                ${
+                                    reviews.length === 1
+                                        ? "review"
+                                        : "reviews"
+                                })
+                            </p>
+                        `
+                        : ""
+                }
+
+
+                <div class="review-list">
+
+                    ${reviewsList}
+
+                </div>
+
+
+                <div class="your-review-message">
+
+                    <strong>
+                        You already reviewed this event.
+                    </strong>
+
+                    <p>
+                        Your rating:
+                        <span class="review-stars">
+                            ${createStars(
+                                myReview.rating
+                            )}
+                        </span>
+                    </p>
+
+                </div>
+
+            </div>
+
+        `;
+    }
+
+
+    return `
+
+        <div class="review-section">
+
+            <h4>Rate This Event</h4>
+
+
+            ${
+                average
+                    ? `
+                        <p class="average-rating">
+                            Average Rating:
+                            <strong>
+                                ⭐ ${average}/5
+                            </strong>
+                            (${reviews.length}
+                            ${
+                                reviews.length === 1
+                                    ? "review"
+                                    : "reviews"
+                            })
+                        </p>
+                    `
+                    : ""
+            }
+
+
+            <form
+                class="review-form"
+                data-event-id="${event.id}"
+            >
+
+                <div class="rating-input">
+
+                    <span>Your Rating:</span>
+
+
+                    <div class="star-selector">
+
+                        ${[1, 2, 3, 4, 5]
+                            .map(
+                                rating => `
+                                    <button
+                                        type="button"
+                                        class="rating-star"
+                                        data-rating="${rating}"
+                                        aria-label="${rating} star"
+                                    >
+                                        ☆
+                                    </button>
+                                `
+                            )
+                            .join("")}
+
+                    </div>
+
+                </div>
+
+
+                <textarea
+                    class="review-text"
+                    placeholder="Write your review about this event..."
+                    rows="4"
+                    maxlength="1000"
+                    required
+                ></textarea>
+
+
+                <button
+                    type="submit"
+                    class="submit-review-btn"
+                >
+                    Submit Review
+                </button>
+
+
+                <p class="review-message"></p>
+
+            </form>
+
+
+            <div class="review-list">
+
+                ${reviewsList}
+
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+// ========================================
 // DISPLAY EVENTS
 // ========================================
 
@@ -176,6 +570,7 @@ function displayEvents(events) {
         document.getElementById(
             "eventsContainer"
         );
+
 
     const noEvents =
         document.getElementById(
@@ -211,18 +606,22 @@ function displayEvents(events) {
             "event-card";
 
 
-        // Register button only appears
-        // if the event has a registration link
+        // Registration button
 
         let registerButton = "";
 
 
-        if (event.registrationLink) {
+        if (
+            event.registrationLink &&
+            event.status !== "Completed"
+        ) {
 
             registerButton = `
 
                 <a
-                    href="${event.registrationLink}"
+                    href="${escapeHtml(
+                        event.registrationLink
+                    )}"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="event-btn register-btn"
@@ -234,46 +633,76 @@ function displayEvents(events) {
         }
 
 
+        // Review section only for completed events
+
+        let reviewSection = "";
+
+
+        if (
+            event.status === "Completed"
+        ) {
+
+            reviewSection =
+                createReviewSection(
+                    event
+                );
+        }
+
+
         card.innerHTML = `
 
             <div class="event-card-content">
 
                 <span class="event-category">
-                    ${event.category}
+                    ${escapeHtml(
+                        event.category
+                    )}
                 </span>
 
 
                 <h3>
-                    ${event.name}
+                    ${escapeHtml(
+                        event.name
+                    )}
                 </h3>
 
 
                 <p>
                     <strong>College:</strong>
-                    ${event.college}
+                    ${escapeHtml(
+                        event.college
+                    )}
                 </p>
 
 
                 <p>
                     <strong>Location:</strong>
-                    ${event.city}
+                    ${escapeHtml(
+                        event.city
+                    )}
                 </p>
 
 
                 <p>
                     <strong>Date:</strong>
-                    ${event.date}
+                    ${formatDate(
+                        event.date
+                    )}
                 </p>
 
 
                 <p>
                     <strong>Status:</strong>
-                    ${event.status}
+                    ${escapeHtml(
+                        event.status
+                    )}
                 </p>
 
 
                 <p class="event-description">
-                    ${event.description}
+                    ${escapeHtml(
+                        event.description
+                    )}
                 </p>
 
 
@@ -290,12 +719,257 @@ function displayEvents(events) {
 
                 </div>
 
+
+                ${reviewSection}
+
             </div>
 
         `;
 
 
         container.appendChild(card);
+
+    });
+
+
+    setupReviewForms();
+}
+
+
+// ========================================
+// REVIEW FORM EVENTS
+// ========================================
+
+function setupReviewForms() {
+
+    const forms =
+        document.querySelectorAll(
+            ".review-form"
+        );
+
+
+    forms.forEach(form => {
+
+        const eventId =
+            form.dataset.eventId;
+
+
+        selectedRatings[eventId] = 0;
+
+
+        const stars =
+            form.querySelectorAll(
+                ".rating-star"
+            );
+
+
+        stars.forEach(star => {
+
+            star.addEventListener(
+                "click",
+                function () {
+
+                    const rating =
+                        Number(
+                            this.dataset.rating
+                        );
+
+
+                    selectedRatings[eventId] =
+                        rating;
+
+
+                    stars.forEach(
+                        currentStar => {
+
+                            const starRating =
+                                Number(
+                                    currentStar.dataset.rating
+                                );
+
+
+                            currentStar.textContent =
+                                starRating <= rating
+                                    ? "★"
+                                    : "☆";
+
+                            currentStar.classList.toggle(
+                                "selected",
+                                starRating <= rating
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+        });
+
+
+        form.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const rating =
+                    selectedRatings[eventId] || 0;
+
+
+                const reviewText =
+                    form.querySelector(
+                        ".review-text"
+                    ).value.trim();
+
+
+                const message =
+                    form.querySelector(
+                        ".review-message"
+                    );
+
+
+                if (rating === 0) {
+
+                    message.textContent =
+                        "Please select a rating.";
+
+                    message.className =
+                        "review-message error";
+
+                    return;
+                }
+
+
+                if (!reviewText) {
+
+                    message.textContent =
+                        "Please write a review.";
+
+                    message.className =
+                        "review-message error";
+
+                    return;
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/api/reviews/event/${eventId}`,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+                                    rating: rating,
+                                    review: reviewText
+                                })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.message ||
+                            "Could not submit review."
+                        );
+                    }
+
+
+                    message.textContent =
+                        "Review submitted successfully!";
+
+                    message.className =
+                        "review-message success";
+
+
+                    // Reload reviews
+
+                    const reviewsResponse =
+                        await fetch(
+                            `/api/reviews/event/${eventId}`
+                        );
+
+
+                    if (
+                        reviewsResponse.ok
+                    ) {
+
+                        reviewsByEvent[eventId] =
+                            await reviewsResponse.json();
+                    }
+
+
+                    // Refresh the displayed events
+
+                    const searchInput =
+                        document.getElementById(
+                            "searchInput"
+                        );
+
+
+                    const search =
+                        searchInput.value
+                            .toLowerCase()
+                            .trim();
+
+
+                    const filteredEvents =
+                        allEvents.filter(
+                            event =>
+                                event.name
+                                    ?.toLowerCase()
+                                    .includes(search) ||
+                                event.category
+                                    ?.toLowerCase()
+                                    .includes(search) ||
+                                event.college
+                                    ?.toLowerCase()
+                                    .includes(search) ||
+                                event.city
+                                    ?.toLowerCase()
+                                    .includes(search) ||
+                                event.description
+                                    ?.toLowerCase()
+                                    .includes(search)
+                        );
+
+
+                    displayEvents(
+                        filteredEvents
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Review submission error:",
+                        error
+                    );
+
+
+                    message.textContent =
+                        error.message ||
+                        "Could not submit review.";
+
+                    message.className =
+                        "review-message error";
+                }
+
+            }
+        );
 
     });
 }
@@ -418,6 +1092,7 @@ function setupLogout() {
                     error
                 );
 
+
                 alert(
                     "Logout failed. Please try again."
                 );
@@ -461,48 +1136,54 @@ async function initializeDashboard() {
             await loadEvents();
 
 
-        // Calculate recommendation scores
+        // Make sure latest events stay first
 
-        const scoredEvents =
-            allEvents.map(
-                event => ({
+        allEvents.sort(
+            (a, b) => {
 
-                    event: event,
-
-                    score:
-                        calculateScore(
-                            event,
-                            currentUser
-                        )
-
-                })
-            );
+                const dateA =
+                    new Date(
+                        `${a.date || "1900-01-01"}T${
+                            a.startTime || "00:00:00"
+                        }`
+                    );
 
 
-        // Highest recommendation first
+                const dateB =
+                    new Date(
+                        `${b.date || "1900-01-01"}T${
+                            b.startTime || "00:00:00"
+                        }`
+                    );
 
-        scoredEvents.sort(
-            (a, b) =>
-                b.score - a.score
+
+                return dateB - dateA;
+            }
         );
 
 
-        const recommendedEvents =
-            scoredEvents.map(
-                item =>
-                    item.event
-            );
+        // Load reviews for completed events
 
+        await loadReviewsForEvents(
+            allEvents
+        );
+
+
+        // Display latest events
 
         displayEvents(
-            recommendedEvents
+            allEvents
         );
 
+
+        // Search
 
         setupSearch();
 
-        setupLogout();
 
+        // Logout
+
+        setupLogout();
 
     } catch (error) {
 
@@ -516,13 +1197,12 @@ async function initializeDashboard() {
             "eventsContainer"
         ).innerHTML = `
 
-            <div class="error-message">
+            <p class="error-message">
 
                 Unable to load events.
-
                 Please refresh the page.
 
-            </div>
+            </p>
 
         `;
     }
@@ -533,7 +1213,4 @@ async function initializeDashboard() {
 // START
 // ========================================
 
-document.addEventListener(
-    "DOMContentLoaded",
-    initializeDashboard
-);
+initializeDashboard();
