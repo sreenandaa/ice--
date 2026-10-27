@@ -681,16 +681,25 @@ async function loadEvents() {
 
                 <div class="event-actions">
 
-                    <a
-                        href="event.html?id=${event.id}"
-                        class="event-btn"
-                    >
-                        View Event
-                    </a>
+    <a
+        href="event.html?id=${event.id}"
+        class="event-btn"
+    >
+        View Event
+    </a>
 
-                    ${ownerButtons}
+    <button
+        type="button"
+        class="event-btn coordinator-view-reviews"
+        data-event-id="${event.id}"
+        data-event-name="${event.name}"
+    >
+        View Reviews
+    </button>
 
-                </div>
+    ${ownerButtons}
+
+</div>
 
             `;
 
@@ -821,3 +830,84 @@ document.addEventListener(
     "DOMContentLoaded",
     initialize
 );
+
+
+// Coordinator: view event reviews, but never submit them.
+document.addEventListener("click", async function (event) {
+
+    const button = event.target.closest(
+        ".coordinator-view-reviews"
+    );
+
+    if (!button) return;
+
+    const eventId = button.dataset.eventId;
+    const eventName = button.dataset.eventName;
+
+    try {
+        const response = await fetch(
+            `/api/reviews/event/${eventId}`,
+            { credentials: "same-origin" }
+        );
+
+        if (!response.ok) {
+            throw new Error("Unable to load reviews.");
+        }
+
+        const reviews = await response.json();
+
+        const escapeHTML = value => String(value ?? "").replace(
+            /[&<>"']/g,
+            c => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[c]
+        );
+
+        const content = reviews.length
+            ? reviews.map(review => `
+                <article class="public-review">
+                    <strong>${escapeHTML(
+                        review.studentName || review.username || "Student"
+                    )}</strong>
+                    <div class="review-stars">
+                        ${"★".repeat(Number(review.rating) || 0)}
+                        ${"☆".repeat(5 - (Number(review.rating) || 0))}
+                    </div>
+                    <p>${escapeHTML(review.review)}</p>
+                </article>
+            `).join("")
+            : "<p>No reviews have been submitted yet.</p>";
+
+        document.getElementById("coordinatorReviewsModal")?.remove();
+
+        const modal = document.createElement("div");
+        modal.id = "coordinatorReviewsModal";
+        modal.className = "public-reviews-modal";
+
+        modal.innerHTML = `
+            <div class="public-reviews-dialog" role="dialog"
+                 aria-modal="true" aria-label="Event reviews">
+                <button type="button" class="close-reviews"
+                        aria-label="Close">&times;</button>
+                <h2>${escapeHTML(eventName)} — Reviews</h2>
+                <div class="public-reviews-list">${content}</div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        modal.querySelector(".close-reviews").onclick =
+            () => modal.remove();
+
+        modal.addEventListener("click", e => {
+            if (e.target === modal) modal.remove();
+        });
+
+    } catch (error) {
+        alert(error.message || "Could not load reviews.");
+    }
+});

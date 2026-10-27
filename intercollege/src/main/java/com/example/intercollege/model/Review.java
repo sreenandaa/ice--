@@ -1,3 +1,4 @@
+
 package com.example.intercollege.model;
 
 import java.time.LocalDateTime;
@@ -5,21 +6,15 @@ import java.time.LocalDateTime;
 public class Review {
 
     private Long id;
-
     private Long eventId;
-
     private String username;
-
+    private String studentName;
     private int rating;
-
     private String review;
-
     private LocalDateTime createdAt;
-
 
     public Review() {
     }
-
 
     public Long getId() {
         return id;
@@ -29,7 +24,6 @@ public class Review {
         this.id = id;
     }
 
-
     public Long getEventId() {
         return eventId;
     }
@@ -37,7 +31,6 @@ public class Review {
     public void setEventId(Long eventId) {
         this.eventId = eventId;
     }
-
 
     public String getUsername() {
         return username;
@@ -47,6 +40,13 @@ public class Review {
         this.username = username;
     }
 
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
 
     public int getRating() {
         return rating;
@@ -56,7 +56,6 @@ public class Review {
         this.rating = rating;
     }
 
-
     public String getReview() {
         return review;
     }
@@ -64,7 +63,6 @@ public class Review {
     public void setReview(String review) {
         this.review = review;
     }
-
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

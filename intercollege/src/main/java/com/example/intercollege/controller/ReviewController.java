@@ -1,3 +1,4 @@
+
 package com.example.intercollege.controller;
 
 import com.example.intercollege.model.Review;
@@ -14,98 +15,79 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reviews")
-@CrossOrigin
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-
-    public ReviewController(
-            ReviewService reviewService) {
-
+    public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
 
-
-    // ========================================
-    // GET REVIEWS FOR EVENT
-    // ========================================
-
+    // View reviews: only logged-in students and coordinators.
     @GetMapping("/event/{eventId}")
-    public ResponseEntity<List<Review>> getReviews(
-            @PathVariable Long eventId) {
+    public ResponseEntity<?> getReviews(
+            @PathVariable Long eventId,
+            HttpSession session) {
+
+        String username =
+                (String) session.getAttribute("username");
+
+        String role =
+                (String) session.getAttribute("role");
+
+        if (username == null ||
+                (!"STUDENT".equalsIgnoreCase(role) &&
+                 !"COORDINATOR".equalsIgnoreCase(role))) {
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(
+                            "message",
+                            "Please log in to view reviews."
+                    ));
+        }
 
         return ResponseEntity.ok(
                 reviewService.getReviewsForEvent(eventId)
         );
     }
 
-
-    // ========================================
-    // ADD REVIEW
-    // ONLY LOGGED-IN STUDENTS
-    // ========================================
-
+    // Only logged-in students can submit reviews.
     @PostMapping("/event/{eventId}")
     public ResponseEntity<?> addReview(
             @PathVariable Long eventId,
             @RequestBody Review review,
             HttpSession session) {
 
-
         String username =
-                (String) session.getAttribute(
-                        "username"
-                );
+                (String) session.getAttribute("username");
 
         String role =
-                (String) session.getAttribute(
-                        "role"
-                );
-
-
-        // Must be logged-in student
+                (String) session.getAttribute("role");
 
         if (username == null ||
-                !"STUDENT".equals(role)) {
+                !"STUDENT".equalsIgnoreCase(role)) {
 
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body(
-                            Map.of(
-                                    "message",
-                                    "Only logged-in students can submit reviews."
-                            )
-                    );
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of(
+                            "message",
+                            "Only logged-in students can submit reviews."
+                    ));
         }
 
-
         try {
+            Review savedReview = reviewService.addReview(
+                    eventId,
+                    username,
+                    review.getRating(),
+                    review.getReview()
+            );
 
-            Review savedReview =
-                    reviewService.addReview(
-                            eventId,
-                            username,
-                            review.getRating(),
-                            review.getReview()
-                    );
-
-
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
+            return ResponseEntity.status(HttpStatus.CREATED)
                     .body(savedReview);
 
-
         } catch (IllegalArgumentException e) {
-
-            return ResponseEntity
-                    .badRequest()
-                    .body(
-                            Map.of(
-                                    "message",
-                                    e.getMessage()
-                            )
-                    );
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
         }
     }
 }
