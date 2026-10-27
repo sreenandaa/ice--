@@ -832,7 +832,11 @@ document.addEventListener(
 );
 
 
-// Coordinator: view event reviews, but never submit them.
+
+/* ========================================
+   COORDINATOR: VIEW EVENT REVIEWS
+======================================== */
+
 document.addEventListener("click", async function (event) {
 
     const button = event.target.closest(
@@ -844,70 +848,143 @@ document.addEventListener("click", async function (event) {
     const eventId = button.dataset.eventId;
     const eventName = button.dataset.eventName;
 
+    if (!eventId) {
+        alert("Unable to identify this event.");
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Loading Reviews...";
+
     try {
         const response = await fetch(
-            `/api/reviews/event/${eventId}`,
-            { credentials: "same-origin" }
+            `/api/reviews/event/${encodeURIComponent(eventId)}`,
+            {
+                method: "GET",
+                credentials: "same-origin",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
         );
 
+        const responseText = await response.text();
+
         if (!response.ok) {
-            throw new Error("Unable to load reviews.");
+            let message = responseText;
+
+            try {
+                const errorData = JSON.parse(responseText);
+                message = errorData.message || responseText;
+            } catch {
+                // Keep the original response text.
+            }
+
+            if (response.status === 401) {
+                throw new Error(
+                    "Your session has expired. Please log in again."
+                );
+            }
+
+            if (response.status === 403) {
+                throw new Error(
+                    "You are not allowed to view these reviews."
+                );
+            }
+
+            throw new Error(
+                message || `Request failed (${response.status}).`
+            );
         }
 
-        const reviews = await response.json();
+        const reviews = JSON.parse(responseText);
 
-        const escapeHTML = value => String(value ?? "").replace(
-            /[&<>"']/g,
-            c => ({
+        if (!Array.isArray(reviews)) {
+            throw new Error("The server returned invalid review data.");
+        }
+
+        const escapeHTML = value =>
+            String(value ?? "").replace(/[&<>"']/g, char => ({
                 "&": "&amp;",
                 "<": "&lt;",
                 ">": "&gt;",
                 '"': "&quot;",
                 "'": "&#39;"
-            })[c]
-        );
+            })[char]);
 
         const content = reviews.length
-            ? reviews.map(review => `
-                <article class="public-review">
-                    <strong>${escapeHTML(
-                        review.studentName || review.username || "Student"
-                    )}</strong>
-                    <div class="review-stars">
-                        ${"★".repeat(Number(review.rating) || 0)}
-                        ${"☆".repeat(5 - (Number(review.rating) || 0))}
-                    </div>
-                    <p>${escapeHTML(review.review)}</p>
-                </article>
-            `).join("")
+            ? reviews.map(review => {
+                const rating = Math.max(
+                    0,
+                    Math.min(5, Number(review.rating) || 0)
+                );
+
+                return `
+                    <article class="public-review">
+                        <strong>${escapeHTML(
+                            review.studentName ||
+                            review.username ||
+                            "Student"
+                        )}</strong>
+
+                        <div class="review-stars">
+                            ${"★".repeat(rating)}${"☆".repeat(5 - rating)}
+                        </div>
+
+                        <p>${escapeHTML(review.review)}</p>
+                    </article>
+                `;
+            }).join("")
             : "<p>No reviews have been submitted yet.</p>";
 
-        document.getElementById("coordinatorReviewsModal")?.remove();
+        document.getElementById(
+            "coordinatorReviewsModal"
+        )?.remove();
 
         const modal = document.createElement("div");
         modal.id = "coordinatorReviewsModal";
         modal.className = "public-reviews-modal";
 
         modal.innerHTML = `
-            <div class="public-reviews-dialog" role="dialog"
-                 aria-modal="true" aria-label="Event reviews">
-                <button type="button" class="close-reviews"
+            <div class="public-reviews-dialog"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-label="Event reviews">
+
+                <button type="button"
+                        class="close-reviews"
                         aria-label="Close">&times;</button>
+
                 <h2>${escapeHTML(eventName)} — Reviews</h2>
-                <div class="public-reviews-list">${content}</div>
+
+                <div class="public-reviews-list">
+                    ${content}
+                </div>
             </div>
         `;
 
         document.body.appendChild(modal);
 
-        modal.querySelector(".close-reviews").onclick =
-            () => modal.remove();
+        modal.querySelector(".close-reviews").onclick = () => {
+            modal.remove();
+        };
 
         modal.addEventListener("click", e => {
-            if (e.target === modal) modal.remove();
+            if (e.target === modal) {
+                modal.remove();
+            }
         });
 
     } catch (error) {
-        alert(error.message || "Could not load reviews.");
+        console.error("Unable to load event reviews:", error);
+
+        alert(
+            error.message || "Unable to load reviews."
+        );
+
+    } finally {
+        button.disabled = false;
+        button.textContent = "View Reviews";
     }
 });
+
