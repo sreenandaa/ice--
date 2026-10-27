@@ -1,101 +1,64 @@
+
 package com.example.intercollege.repository;
 
 import com.example.intercollege.model.Review;
 import com.example.intercollege.util.JsonFileUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class ReviewRepository {
 
-    private static final String FILE_PATH =
-            "data/reviews.json";
+    @Value("${app.data.directory:data}")
+    private String dataDirectory;
 
-
-    // ========================================
-    // GET ALL REVIEWS
-    // ========================================
+    private String filePath() {
+        return Paths.get(dataDirectory, "reviews.json").toString();
+    }
 
     public List<Review> findAll() {
-
         return JsonFileUtil.readList(
-                FILE_PATH,
+                filePath(),
                 new TypeReference<List<Review>>() {}
         );
     }
 
-
-    // ========================================
-    // GET REVIEW BY ID
-    // ========================================
-
     public Optional<Review> findById(Long id) {
-
-        return findAll()
-                .stream()
-                .filter(review ->
-                        review.getId() != null &&
-                        review.getId().equals(id)
-                )
+        return findAll().stream()
+                .filter(review -> review.getId() != null
+                        && review.getId().equals(id))
                 .findFirst();
     }
 
-
-    // ========================================
-    // GET REVIEWS FOR EVENT
-    // ========================================
-
     public List<Review> findByEventId(Long eventId) {
-
-        return findAll()
-                .stream()
-                .filter(review ->
-                        review.getEventId() != null &&
-                        review.getEventId().equals(eventId)
-                )
+        return findAll().stream()
+                .filter(review -> review.getEventId() != null
+                        && review.getEventId().equals(eventId))
                 .toList();
     }
 
-
-    // ========================================
-    // FIND STUDENT REVIEW FOR EVENT
-    // ========================================
-
     public Optional<Review> findByEventIdAndUsername(
-            Long eventId,
-            String username) {
+            Long eventId, String username) {
 
-        return findAll()
-                .stream()
-                .filter(review ->
-                        review.getEventId() != null &&
-                        review.getEventId().equals(eventId) &&
-                        review.getUsername() != null &&
-                        review.getUsername().equals(username)
-                )
+        return findAll().stream()
+                .filter(review -> review.getEventId() != null
+                        && review.getEventId().equals(eventId)
+                        && review.getUsername() != null
+                        && review.getUsername().equals(username))
                 .findFirst();
     }
 
-
-    // ========================================
-    // SAVE
-    // ========================================
-
     public Review save(Review review) {
-
         List<Review> reviews = findAll();
-
         reviews.add(review);
 
-        JsonFileUtil.writeList(
-                FILE_PATH,
-                reviews
-        );
-
+        JsonFileUtil.writeList(filePath(), reviews);
         return review;
     }
 }
