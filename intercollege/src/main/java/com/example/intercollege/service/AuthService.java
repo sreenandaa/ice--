@@ -14,8 +14,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+    public AuthService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
+
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -23,19 +25,51 @@ public class AuthService {
     // REGISTER
     public User register(User user) {
 
-        // Check if username already exists
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already exists");
+        // Check required fields.
+        if (user.getName() == null ||
+                user.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Name is required");
         }
 
-        user.setRole("STUDENT");
+        if (user.getUsername() == null ||
+                user.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username is required");
+        }
 
-        // Hash the password before saving
+        if (user.getPassword() == null ||
+                user.getPassword().length() < 6) {
+            throw new IllegalArgumentException(
+                    "Password must contain at least 6 characters");
+        }
+
+        user.setUsername(user.getUsername().trim());
+
+        // Check whether the username already exists.
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new IllegalArgumentException(
+                    "Username already exists. Please choose another.");
+        }
+
+        // Accept only Student or Coordinator.
+        String role = user.getRole();
+
+        if (role == null ||
+                (!role.equalsIgnoreCase("STUDENT") &&
+                 !role.equalsIgnoreCase("COORDINATOR"))) {
+
+            throw new IllegalArgumentException(
+                    "Please choose Student or Coordinator");
+        }
+
+        // Save the selected role.
+        user.setRole(role.toUpperCase());
+
+        // Encrypt the password before saving.
         user.setPassword(
                 passwordEncoder.encode(user.getPassword())
         );
 
-        // Generate an ID
+        // Generate the next user ID.
         List<User> users = userRepository.findAll();
 
         long nextId = users.stream()
@@ -53,25 +87,28 @@ public class AuthService {
     // LOGIN
     public User login(String username, String password) {
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username.trim())
                 .orElseThrow(() ->
-                        new RuntimeException("Invalid username or password"));
+                        new IllegalArgumentException(
+                                "Invalid username or password"));
 
-        if (!passwordEncoder.matches(
-                password,
-                user.getPassword())) {
+        if (password == null ||
+                !passwordEncoder.matches(
+                        password,
+                        user.getPassword())) {
 
-            throw new RuntimeException("Invalid username or password");
+            throw new IllegalArgumentException(
+                    "Invalid username or password");
         }
 
         return user;
     }
 
-    // FIND PROFILE
+    // GET PROFILE
     public User getProfile(String username) {
 
         return userRepository.findByUsername(username)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new IllegalArgumentException("User not found"));
     }
 }
