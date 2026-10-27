@@ -1,1 +1,25 @@
-[]
+[ {
+  "id" : 1,
+  "eventId" : 2,
+  "username" : "Sreenanda",
+  "studentName" : "Sreenanda",
+  "rating" : 4,
+  "review" : "Kudos",
+  "createdAt" : [ 2026, 10, 28, 1, 58, 13, 265981800 ]
+}, {
+  "id" : 2,
+  "eventId" : 2,
+  "username" : "Aishwarya",
+  "studentName" : "Aishwarya",
+  "rating" : 3,
+  "review" : "nice",
+  "createdAt" : [ 2026, 10, 28, 2, 0, 24, 54296800 ]
+}, {
+  "id" : 3,
+  "eventId" : 1,
+  "username" : "Aishwarya",
+  "studentName" : "Aishwarya",
+  "rating" : 4,
+  "review" : "Wonderful experience",
+  "createdAt" : [ 2026, 10, 28, 2, 0, 56, 236464900 ]
+} ]

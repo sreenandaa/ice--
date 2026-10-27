@@ -1,1 +1,28 @@
-[]
+[ {
+  "id" : 1,
+  "name" : "Sreenanda",
+  "username" : "Sreenanda",
+  "password" : "$2a$10$L7XoqRoGN5dBtZIcH6P.uu5bIUYCspVmpCQwcDOZTFoFT40wc.ynC",
+  "role" : "STUDENT",
+  "college" : "TKM College of Engineering",
+  "location" : "Kollam",
+  "interests" : [ "AI/ML" ]
+}, {
+  "id" : 2,
+  "name" : "Aishwarya",
+  "username" : "Aishwarya",
+  "password" : "$2a$10$BU/2NSZ10clvhF/FAEosMO01Z87lgMVWBwGmgyTUhlycoXQ615H9q",
+  "role" : "STUDENT",
+  "college" : "IIIT Kottayam",
+  "location" : "kottayam",
+  "interests" : [ "Robotics" ]
+}, {
+  "id" : 3,
+  "name" : "Dora",
+  "username" : "Dora",
+  "password" : "$2a$10$XiAk.yTOlOjBdiQ2x9obge78aXufDS.91opc/LdoDgkY55iAEKA1C",
+  "role" : "COORDINATOR",
+  "college" : "TKM College of Engineering",
+  "location" : "Kollam",
+  "interests" : [ "AI" ]
+} ]

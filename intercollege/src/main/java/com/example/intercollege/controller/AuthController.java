@@ -1,3 +1,4 @@
+
 package com.example.intercollege.controller;
 
 import com.example.intercollege.model.User;
@@ -5,8 +6,11 @@ import com.example.intercollege.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,9 +30,12 @@ public class AuthController {
 
         User savedUser = authService.register(user);
 
-        // Create a session for the newly registered user.
-        session.setAttribute("username", savedUser.getUsername());
-        session.setAttribute("role", savedUser.getRole());
+        // Log in the newly registered user.
+        session.setAttribute(
+                "username", savedUser.getUsername());
+
+        session.setAttribute(
+                "role", savedUser.getRole());
 
         // Never send the password to the browser.
         savedUser.setPassword(null);
@@ -47,9 +54,13 @@ public class AuthController {
                 request.password()
         );
 
-        session.setAttribute("username", user.getUsername());
-        session.setAttribute("role", user.getRole());
+        session.setAttribute(
+                "username", user.getUsername());
 
+        session.setAttribute(
+                "role", user.getRole());
+
+        // Never send the password to the browser.
         user.setPassword(null);
 
         return user;
@@ -77,9 +88,27 @@ public class AuthController {
         }
 
         User user = authService.getProfile(username);
+
+        // Never send the password to the browser.
         user.setPassword(null);
 
         return user;
+    }
+
+    // RETURN VALIDATION ERRORS AS JSON
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>>
+            handleIllegalArgument(
+                    IllegalArgumentException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "message",
+                        ex.getMessage() == null
+                                ? "Invalid registration details"
+                                : ex.getMessage()
+                ));
     }
 
     // LOGIN REQUEST

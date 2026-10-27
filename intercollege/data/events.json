@@ -41,5 +41,27 @@
   "createdBy" : "lakshmi",
   "createdAt" : [ 2026, 9, 23, 1, 1, 8, 602690900 ],
   "updatedAt" : [ 2026, 9, 23, 1, 1, 8, 602690900 ],
+  "status" : "Completed"
+}, {
+  "id" : 3,
+  "name" : "FOSSSoc : FOSS - Season of Commits",
+  "description" : "FOSS TKMCE presents FOSSSoC -FOSS Season of commits- a two-month open-source challenge to learn, contribute, and compete for a share of the ₹5,000 prize pool! \uD83D\uDE80\n\nHow to Contribute\n\nContribute to our official repository and earn points through:\n\nIdea Implementations - Bring new features to life.\nBug Fixes - Identify and fix issues.\nDocumentation - Improve project guides and documentation.\n\nEarn points for your contributions, track weekly leaderboard updates, and compete for the top spot!",
+  "college" : "TKM College of Engineering",
+  "category" : "Technical",
+  "date" : [ 2026, 11, 11 ],
+  "startTime" : [ 10, 0 ],
+  "endTime" : [ 22, 0 ],
+  "venue" : "Online",
+  "city" : "Kollam",
+  "latitude" : 0.0,
+  "longitude" : 0.0,
+  "registrationLink" : "https://forms.gle/ycXoN7u5ZqvhG3WHA",
+  "organizer" : "FOSS TKMCE",
+  "contact" : "9274958401",
+  "imageUrl" : "",
+  "maxParticipants" : 250,
+  "createdBy" : "Dora",
+  "createdAt" : [ 2026, 10, 28, 2, 6, 30, 544686000 ],
+  "updatedAt" : [ 2026, 10, 28, 2, 6, 30, 544686000 ],
   "status" : "Upcoming"
 } ]
