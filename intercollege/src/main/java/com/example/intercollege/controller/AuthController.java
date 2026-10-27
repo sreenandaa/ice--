@@ -1,3 +1,4 @@
+```java
 package com.example.intercollege.controller;
 
 import com.example.intercollege.model.User;
@@ -18,12 +19,19 @@ public class AuthController {
         this.authService = authService;
     }
 
-    // REGISTER
+    // REGISTER AND AUTOMATICALLY LOG IN
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
+    public User register(
+            @RequestBody User user,
+            HttpSession session) {
+
         User savedUser = authService.register(user);
 
-        // Never send password back to the frontend
+        // Create a session for the newly registered user.
+        session.setAttribute("username", savedUser.getUsername());
+        session.setAttribute("role", savedUser.getRole());
+
+        // Never send the password to the browser.
         savedUser.setPassword(null);
 
         return savedUser;
@@ -31,50 +39,49 @@ public class AuthController {
 
     // LOGIN
     @PostMapping("/login")
-public User login(
-        @RequestBody LoginRequest request,
-        HttpSession session) {
+    public User login(
+            @RequestBody LoginRequest request,
+            HttpSession session) {
 
-    User user = authService.login(
-            request.username(),
-            request.password()
-    );
+        User user = authService.login(
+                request.username(),
+                request.password()
+        );
 
-    session.setAttribute("username", user.getUsername());
-    session.setAttribute("role", user.getRole());
+        session.setAttribute("username", user.getUsername());
+        session.setAttribute("role", user.getRole());
 
-    user.setPassword(null);
+        user.setPassword(null);
 
-    return user;
-}
-// LOGOUT
-@PostMapping("/logout")
-public String logout(HttpSession session) {
-
-    session.invalidate();
-
-    return "Logged out successfully";
-}
-
-   // PROFILE
-@GetMapping("/profile")
-public User profile(HttpSession session) {
-
-    String username = (String) session.getAttribute("username");
-
-    if (username == null) {
-        throw new ResponseStatusException(
-        HttpStatus.UNAUTHORIZED,
-        "Not logged in"
-);
+        return user;
     }
 
-    User user = authService.getProfile(username);
+    // LOGOUT
+    @PostMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "Logged out successfully";
+    }
 
-    user.setPassword(null);
+    // GET CURRENT USER PROFILE
+    @GetMapping("/profile")
+    public User profile(HttpSession session) {
 
-    return user;
-}
+        String username =
+                (String) session.getAttribute("username");
+
+        if (username == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Not logged in"
+            );
+        }
+
+        User user = authService.getProfile(username);
+        user.setPassword(null);
+
+        return user;
+    }
 
     // LOGIN REQUEST
     public record LoginRequest(
@@ -83,3 +90,4 @@ public User profile(HttpSession session) {
     ) {
     }
 }
+```

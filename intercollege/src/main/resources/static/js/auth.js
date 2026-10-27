@@ -1,3 +1,4 @@
+```javascript
 // ==============================
 // REGISTER
 // ==============================
@@ -5,78 +6,67 @@
 const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
-
     registerForm.addEventListener("submit", async function (event) {
-
         event.preventDefault();
 
         const name = document.getElementById("name").value.trim();
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
         const college = document.getElementById("college").value.trim();
         const location = document.getElementById("location").value.trim();
 
-        // Convert "AI, Web Development, Robotics"
-        // into ["AI", "Web Development", "Robotics"]
-        const interestsText =
-            document.getElementById("interests").value;
-
-        const interests = interestsText
+        const interests = document.getElementById("interests").value
             .split(",")
-            .map(interest => interest.trim())
-            .filter(interest => interest.length > 0);
+            .map(item => item.trim())
+            .filter(item => item.length > 0);
+
+        const message = document.getElementById("registerMessage");
 
         try {
-
             const response = await fetch("/api/auth/register", {
-
                 method: "POST",
-
                 headers: {
                     "Content-Type": "application/json"
                 },
-
+                credentials: "same-origin",
                 body: JSON.stringify({
-                    name: name,
-                    username: username,
-                    password: password,
-                    college: college,
-                    location: location,
-                    interests: interests
+                    name,
+                    username,
+                    password,
+                    role,
+                    college,
+                    location,
+                    interests
                 })
-
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => ({}));
 
             if (!response.ok) {
-                throw new Error(
-                    data.message || "Registration failed"
-                );
+                throw new Error(data.message || data.error ||
+                    "Registration failed. Please try again.");
             }
 
-            document.getElementById("registerMessage").textContent =
-                "Registration successful! Redirecting to login...";
+            message.textContent =
+                "Registration successful! Opening your dashboard...";
 
-            setTimeout(() => {
-                window.location.href = "login.html";
-            }, 1000);
+            // Registration also logs the user in.
+            if (data.role === "COORDINATOR") {
+                window.location.replace("coordinator-dashboard.html");
+            } else if (data.role === "STUDENT") {
+                window.location.replace("student-dashboard.html");
+            } else {
+                throw new Error("Invalid user role returned by server.");
+            }
 
         } catch (error) {
-
             console.error(error);
-
-            document.getElementById("registerMessage").textContent =
-                error.message;
+            message.textContent = error.message;
         }
-
     });
 }
 
-
-// ==============================
-// LOGIN
-// ==============================
 
 // ==============================
 // LOGIN
@@ -85,93 +75,43 @@ if (registerForm) {
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
-
     loginForm.addEventListener("submit", async function (event) {
-
         event.preventDefault();
 
-        const username =
-            document.getElementById("username").value.trim();
-
-        const password =
-            document.getElementById("password").value;
-
-        const loginMessage =
-            document.getElementById("loginMessage");
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const message = document.getElementById("loginMessage");
 
         try {
-
-            const loginResponse = await fetch("/api/auth/login", {
-
+            const response = await fetch("/api/auth/login", {
                 method: "POST",
-
                 headers: {
                     "Content-Type": "application/json"
                 },
-
-                body: JSON.stringify({
-                    username: username,
-                    password: password
-                })
-
+                credentials: "same-origin",
+                body: JSON.stringify({ username, password })
             });
 
-            if (!loginResponse.ok) {
+            const data = await response.json().catch(() => ({}));
 
-                const errorData =
-                    await loginResponse.json()
-                        .catch(() => ({}));
-
-                throw new Error(
-                    errorData.message ||
-                    "Invalid username or password"
-                );
+            if (!response.ok) {
+                throw new Error(data.message || data.error ||
+                    "Invalid username or password.");
             }
 
-
-            // Get the logged-in user's details
-            const profileResponse =
-                await fetch("/api/auth/profile");
-
-
-            if (!profileResponse.ok) {
-
-                throw new Error(
-                    "Could not load user profile"
-                );
-            }
-
-
-            const user =
-                await profileResponse.json();
-
-
-            loginMessage.textContent =
-                "Login successful! Redirecting...";
-
-
-            // Redirect according to role
-
-            if (user.role === "COORDINATOR") {
-
-                window.location.href =
-                    "coordinator-dashboard.html";
-
+            // The server returns the logged-in user's role.
+            if (data.role === "COORDINATOR") {
+                window.location.replace("coordinator-dashboard.html");
+            } else if (data.role === "STUDENT") {
+                window.location.replace("student-dashboard.html");
             } else {
-
-                window.location.href =
-                    "student-dashboard.html";
+                throw new Error("Could not identify your account role.");
             }
-
 
         } catch (error) {
-
             console.error(error);
-
-            loginMessage.textContent =
-                error.message;
+            message.textContent = error.message;
         }
-
     });
-
 }
+```

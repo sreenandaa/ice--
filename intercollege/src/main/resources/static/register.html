@@ -1,98 +1,59 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - InterCollege</title>
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/auth.css">
 </head>
-
 <body>
-
 <div class="auth-container">
-
     <div class="auth-card card">
-
         <h1>Create Account</h1>
 
         <form id="registerForm">
+            <label for="name">Name</label>
+            <input type="text" id="name" required>
 
-            <label>Name</label>
+            <label for="username">Username</label>
+            <input type="text" id="username" required>
 
-            <input
-                type="text"
-                id="name"
-                required
-            >
+            <label for="password">Password</label>
+            <input type="password" id="password"
+                   required minlength="6">
 
-            <label>Username</label>
+            <label for="role">Register as</label>
+            <select id="role" required>
+                <option value="">Choose your role</option>
+                <option value="STUDENT">Student</option>
+                <option value="COORDINATOR">Coordinator</option>
+            </select>
 
-            <input
-                type="text"
-                id="username"
-                required
-            >
+            <label for="college">College</label>
+            <input type="text" id="college">
 
-            <label>Password</label>
+            <label for="location">Location</label>
+            <input type="text" id="location" placeholder="Eg: Kollam">
 
-            <input
-                type="password"
-                id="password"
-                required
-            >
+            <label for="interests">Interests</label>
+            <input type="text" id="interests"
+                   placeholder="AI, Web Development, Robotics">
 
-            <label>College</label>
-
-            <input
-                type="text"
-                id="college"
-            >
-
-            <label>Location</label>
-
-            <input
-                type="text"
-                id="location"
-                placeholder="Eg: Kollam"
-            >
-
-            <label>Interests</label>
-
-            <input
-                type="text"
-                id="interests"
-                placeholder="AI, Web Development, Robotics"
-            >
-
-            <button
-                type="submit"
-                class="btn"
-            >
-                Create Account
-            </button>
-
+            <button type="submit" class="btn">Create Account</button>
         </form>
 
         <p id="registerMessage"></p>
 
-        <p>
-            Already have an account?
+        <p>Already have an account?
             <a href="login.html">Login</a>
         </p>
-
     </div>
-
 </div>
 
 <script src="js/auth.js"></script>
-
 </body>
 </html>
+```
