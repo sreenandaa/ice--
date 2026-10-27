@@ -1,4 +1,3 @@
-```java
 package com.example.intercollege.controller;
 
 import com.example.intercollege.model.User;
@@ -90,4 +89,3 @@ public class AuthController {
     ) {
     }
 }
-```
