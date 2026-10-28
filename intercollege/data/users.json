@@ -25,4 +25,13 @@
   "college" : "TKM College of Engineering",
   "location" : "Kollam",
   "interests" : [ "AI" ]
+}, {
+  "id" : 4,
+  "name" : "Niharika",
+  "username" : "Niha",
+  "password" : "$2a$10$Yl0K4aP1uPCBjwQpWINhcuuqE.UhaoYaF5hF6IUlN6GizkbQIgX.2",
+  "role" : "COORDINATOR",
+  "college" : "TKM College of Engineering",
+  "location" : "Kollam",
+  "interests" : [ "AI/ML" ]
 } ]
